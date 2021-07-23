@@ -1,0 +1,132 @@
+{% extends "idgo_lme_majic/base.html" %}
+
+{% load bootstrap3 %}
+{% load static %}
+
+
+
+{% block main %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-offset-1 col-md-10">
+      <h1>Espace MAJIC</h1>
+      <p>
+        Les fichiers fonciers standards communément désignés fichiers MAJIC III (Mise A Jour des Informations Cadastrales)
+        comportent des renseignements relatifs aux propriétés bâties et non bâties.
+        <br>
+        L'accès et la délivrance des données cadastrales ont été organisés dès la création du cadastre...
+      </p>
+      <div>
+        <h5><b>TÉLÉCHARGER DOCUMENTS À SIGNER</b></h5>
+        <div>
+          <a href="{% static "Declaration_du_Delegue_a_la_Protection_des_Donnees_Personnelles.pdf" %}" target="_blank"
+            class="card-link">Clause de confidentialité
+          </a>
+        </div>
+        <div>
+          <a href="{% static "Clause_de_confidentialite.pdf" %}" target="_blank"
+            class="card-link">Déclaration du Délégué à la Protection des Données Personnelles
+          </a>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+      <div class="col-sm-5">
+        <h5>TERRITOIRE DE COMPÉTENCE</h5>
+        {{profile.jurisdiction}}
+        <div class="list-group" id="id_list_groups">
+          {% for organisation in organisations %}
+            {% if organisation  %}
+            <div>
+              <input 
+                class="form-check-input" 
+                type="radio" 
+                name="flexRadioDefault" 
+                id="{{ forloop.counter0 }}-input" 
+                value="{{ forloop.counter0 }}">
+              <label class="form-check-label" for="flexRadioDefault1">
+                {{ organisation.jurisdiction }}
+                <!-- {% include "idgo_lme_majic/organisation/jurisdiction.html" %} -->
+                
+              </label>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col-sm-7">
+        <h2>CARTE</h2>
+        {% include "idgo_lme_majic/organisation/jurisdiction.html"  %}
+      </div>
+      
+      <br>
+      <div class="col-sm-10" style="padding-left: 2em;">
+
+      <form method="post" action="">
+        {% csrf_token %}
+        <div class="row">
+          <div>
+          <div class="mb-3">
+            <label for="formFile" class="form-label">Ajouter Clause de confidentialité signé</label>
+            <div>
+              <div id="list_file_clausule"></div>
+              <input type="button" class="btn btn-primary" id="loadFileXml" value="Parcourir..." onclick="document.getElementById('fileClausule').click();" />
+              <input type="file" style="display:none;" id="fileClausule" name="fileClausule"/>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="mb-3">
+            <label for="formFile" class="form-label">Ajouter Déclaration du Délégué à la Protection des Données Personnelles signé</label>
+            <div>
+              <div id="list_file_declaration"></div>
+              <input type="button" class="btn btn-primary" id="loadFileXml" value="Parcourir..." onclick="document.getElementById('fileDeclaration').click();" />
+              <input type="file" style="display:none;" id="fileDeclaration" name="fileDeclaration"/>
+              
+            </div>
+          </div>
+        </div>
+        </div>
+        <br>
+        <div class="buttons-on-the-right-side">
+          <button type="submit" class="btn btn-primary">Envoyer demande</button>
+        </div>
+        
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  var fileDeclaration = document.getElementById('fileDeclaration');
+  var listFileDeclaration = document.getElementById('list_file_declaration');
+  var fileClausule = document.getElementById('fileClausule');
+  var listFileClausule = document.getElementById('list_file_clausule');
+  
+
+  fileDeclaration.onchange = function () {
+    var files = Array.from(this.files);
+    files = files.map(file => file.name);
+    listFileDeclaration.innerHTML = files.join('<br/>');
+  }
+  fileClausule.onchange = function () {
+    var files = Array.from(this.files);
+    files = files.map(file => file.name);
+    listFileClausule.innerHTML = files.join('<br/>');
+  }
+
+  $(document).ready(function() {
+    console.log($("#0-input"))
+    $("#0-input").prop("checked", true);
+  // console.log($('#id_list_groups').val())
+  // var form_idx = $('#id_list_groups').val();
+
+  // for (var i=0; i <=form_idx;i++ ){
+  //   let id_form = '#id_form-' + i + '-name';
+  //   prevent_start_with_number(id_form)
+  // }
+  })
+
+</script>
+{% endblock main %}
+
+<!-- TODO: VALIDATION FICHIER PDF ET TAILLE (COMBIEN?)-->

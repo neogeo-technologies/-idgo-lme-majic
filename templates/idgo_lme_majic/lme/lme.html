@@ -1,0 +1,61 @@
+{% extends "idgo_lme_majic/base.html" %}
+
+{% load bootstrap3 %}
+{% load static %}
+
+
+
+{% block main %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-offset-2 col-md-8">
+      <h1>Espace LME</h1>
+      <p>
+        Les fichiers fonciers standards communément désignés fichiers LME
+        comportent des renseignements relatifs aux propriétés bâties et non bâties.
+        <br>
+        L'accès et la délivrance des données cadastrales ont été organisés dès la création du cadastre. Outre les plans,
+        <br>
+        dont une collection annuelle est mise gratuitement à la disposition des communes sous forme de papier ou dématérialisée,
+        les collectivités peuvent se procurer les fichiers annuels actualisés des données foncières, disponibles à compter de 
+        la fin du 1er semestre. Ces fichiers, qui présentent la situation au 1er janvier, sont au nombre de cinq :
+      </p>
+      <div>
+        <a href="{% static "Declaration_du_Delegue_a_la_Protection_des_Donnees_Personnelles.pdf" %}" 
+          class="card-link">Clause de confidentialité
+        </a>
+      </div>
+      <div>
+        <a href="{% static "Clause_de_confidentialite.pdf" %}" 
+          class="card-link">Déclaration du Délégué à la Protection des Données Personnelles
+        </a>
+      </div>
+      <br/>
+      <div class="card" >
+        <div class="card-body">
+          <h5 class="card-title">Card title</h5>
+          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <a href="#" class="card-link">Clause de confidentialité</a>
+          <a href="#" class="card-link">Déclaration du Délégué à la Protection des Données Personnelles</a>
+        </div>
+      </div>
+
+      <form method="post" action="">
+        {% csrf_token %}
+        <!-- {% bootstrap_field form.majic %} -->
+        <!-- <p>Entrez le mot de passe ci-dessous pour afin d'initialiser le compte utilisateur.</p> -->
+        <div class="row">
+          <!-- <div class="col-xs-12 col-sm-12">
+            {% bootstrap_field form.date_expiration_majic %}
+          </div> -->
+        </div>
+        <div class="buttons-on-the-right-side">
+          <a class="btn btn-default" href="./">Annuler</a>
+          <button type="submit" class="btn btn-primary">Valider</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock main %}
