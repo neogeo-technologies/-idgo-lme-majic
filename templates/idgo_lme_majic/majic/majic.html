@@ -7,7 +7,7 @@
 {% block main %}
 <div class="container">
   <div class="row">
-    <div class="alert alert-danger" style="display: none;" id="files_validation_error"></div>
+    <div class="alert alert-danger" style="display: none;" id="msg-validation-error"></div>
       <div class="col-md-offset-1 col-md-10">
         <h1>Espace MAJIC</h1>
         <p>
@@ -18,7 +18,7 @@
         
         {% if majics  %}
         <hr>
-          <h4><b>EXTRACTION DEMANDÉE</b></h4>
+          <h4><b>FAIRE UNE EXTRACTION</b></h4>
           {% for majic in majics %}
             <div class="row">
               <div class="col-sm-5">
@@ -28,6 +28,7 @@
               </div>
               <div class="col-sm-7">
                   <h5)>TERRITOIRE DE COMPÉTENCE</h5>
+                    {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
               </div>
             </div>
             <form method="POST" action="" id="download-form">
@@ -123,7 +124,7 @@
               </div>
             <br>
             <div>
-              <form method="POST" action="" id="majic">
+              <form method="POST" action="" id="majic-lme-form">
                 {% csrf_token %}
                 <div class="row">
                   <div class="col-sm-5">
@@ -141,7 +142,7 @@
                             class="form-check-input" 
                             type="radio" 
                             name="organisation" 
-                            id="{{ forloop.counter0 }}-input" 
+                            id="{{ forloop.counter0 }}-organisation-input" 
                             value="{{ organisation.pk }}">
                           <label class="form-check-label" for="organisation">
                             {{ organisation.legal_name }} - {{ organisation.jurisdiction }}
@@ -153,7 +154,7 @@
                   </div>
                   <div class="col-sm-7">
                     <h5)>TERRITOIRE DE COMPÉTENCE</h5>
-                    {% if organisation  %}
+                    {% if organisations  %}
                       {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
                     {% endif %}
                   </div>
@@ -203,248 +204,20 @@
     </div>
   </div>
 </div>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
 <script>
 
-function uuidv4() {
-  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-  );
-}
-
-function setCookie(cname, cvalue, exdays) {
-  var d = new Date();
-  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000)); // En jours
-  var expires = "expires="+d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
-
-function getCookie(cname) {
-  var name = cname + "=";
-  var decodedCookie = decodeURIComponent(document.cookie);
-  var ca = decodedCookie.split(';');
-  for(var i = 0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
-
-function checkCookie(cname) {
-  var extraction_ok = getCookie(cname);
-  if (extraction_ok != "") {
-    return extraction_ok;
-  }
-  else { return false}
-}
-
-
-function check_extract(statut="", url=""){
-
-  var organisation = document.getElementById('organisation');
-  var secret = document.getElementById('secret');
-  var mode = document.getElementById('mode');
-  var request_id = document.getElementById('request_id');
-  params= {
-    'organisation': organisation.value,
-    'secret': secret.value,
-    'mode': mode.value,
-    'request_id': request_id.value,
-    'statut': statut,
-    'url': url,
-  }
-  axios({
-    method: 'get',
-    url: 'majic_check',
-    params: params,
-    headers: {'Content-Type': 'multipart/form-data' }
-    })
-    .then(function (response) {
-        let response_html = '';
-        // IF RESPONSE STATUT OK
-        if (response.data.statut == 'OK'){
-          setCookie('extraction-majic', secret.value + response.data.url, 1);
-          response_html = response_ok(response.data.url, secret.value, request_id.value)
-          }
-        // IF RESPONSE STATUT PENDING
-        if (response.data.statut == 'pending'){
-        // FOR TEST
-        // if (response.data.statut == 'OK'){
-
-          response_html = `<h5> Statut de la demande : En cours</h5>
-                          La demande ça va relancer dans quelques instants.
-                          <div class="loader"></div>`
-          setTimeout(function(){ check_extract('pending', response.data.url); }, 30000);
-          // relance_function()
-        }
-        // IF RESPONSE STATUT ERROR
-        if (response.data.statut == 'error'){
-          response_html = `<h5> Un erreur s'est produit lors de votre demande. Merci Contactez aux administrateurs du site.</h5>
-                          La demande ça va relancer dans quelques instants.
-                          <div class="spinner-border" role="status">
-                          <div class="loader"></div>`
-          setTimeout(function(){ check_extract()}, 30000);
-        }
+  function check_cookies(){
+      var cookieExtraction = checkCookie('extraction-majic');
+      if (cookieExtraction != false) {
+        let secret = cookieExtraction.substring(0, 6)
+        let request_id = cookieExtraction.split("request_id=")[1];
+        response_html = response_ok(cookieExtraction.substring(6), secret, request_id)
         set_response(response_html)
-       
-    })
-    .catch(function (response) {
-        //handle error
-        console.log('erreur', response);
-    });
-}
-
-function response_ok(url, secret, request_id){
-  return `<h5> Télécharger l'extraction : 
-          <a href="download_majic?request_id=${request_id}">
-            Fichier zip
-          </a>
-        </h5>
-        Code secret: <b>${secret}</b>`
-}
-
-function set_response(response_html){
-  $('#statut-id-0').html(`
-    ${response_html}
-  `);
-  hiddenElement("download-form")
-}
-
-  $("input:checkbox").on('click', function() {
-    // in the handler, 'this' refers to the box clicked on
-    var $box = $(this);
-    if ($box.is(":checked")) {
-      // the name of the box is retrieved using the .attr() method
-      // as it is assumed and expected to be immutable
-      var group = "input:checkbox[name='" + $box.attr("name") + "']";
-      // the checked state of the group/box on the other hand will change
-      // and the current value is retrieved using .prop() method
-      $(group).prop("checked", false);
-      $box.prop("checked", true);
-    } else {
-      $box.prop("checked", false);
-    }
-  });
-
-  var fileDeclaration = document.getElementById('fileDeclaration');
-  var listFileDeclaration = document.getElementById('list_file_declaration');
-  var fileClausule = document.getElementById('fileClausule');
-  var listFileClausule = document.getElementById('list_file_clausule');
-  
-  if (fileDeclaration !== null && fileDeclaration.value == '') {
-    fileDeclaration.onchange = function () {
-      var files = Array.from(this.files);
-      files = files.map(file => file.name);
-      listFileDeclaration.innerHTML = files.join('<br/>');
-    }
-  }
-  if (fileClausule !== null && fileClausule.value == '') {
-    fileClausule.onchange = function () {
-      var files = Array.from(this.files);
-      files = files.map(file => file.name);
-      listFileClausule.innerHTML = files.join('<br/>');
-    }
-  }
-
-
-$(document).ready(function() {
-  var cookieExtraction = checkCookie("extraction-majic");
-  if (cookieExtraction != false) {
-    let secret = cookieExtraction.substring(0, 6)
-    let request_id = cookieExtraction.split("request_id=")[1];
-    response_html = response_ok(cookieExtraction.substring(6), cookieExtraction.substring(0, 6), request_id)
-    set_response(response_html)
-  }
-
-  // Majic user form
-  const majic_form = document.getElementById('majic');
-  if (majic_form) {
-    majic_form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (validateMajicForm()) {
-        e.currentTarget.submit();
       }
-    });
-  }
+    }
+  </script>
 
-  // Form for download files
-  const dowload_form = document.getElementById('download-form');
-  if (dowload_form !== null) {
-    // INIT UUID FOR FORM EXTRACTION
-    var request_id = document.getElementById('request_id').value = uuidv4();
-    document.getElementById('secret').value = request_id.substring(6, 12);
-
-    dowload_form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (validateDowloadForm()) {
-        check_extract()
-      }
-    });
-  }
-});
-
-function hiddenElement(name){
-  document.getElementById(name).style.display = 'None';
-  }
-
-
-// Download form validation
-function validateDowloadForm() {
-  // Validation flag
-  let valid = true;
-  // Something
-  return valid;
-
-}
-
-// Majic form validation
-function validateMajicForm() {
-  // Validation flag
-  let valid = true;
-  const files_error = document.getElementById('files_validation_error');
-  console.log(files_error)
-  files_error.innerHTML = `<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                           </button>`;
-
-  if( document.getElementById("fileDeclaration").files.length == 0 ){
-    files_error.innerHTML += '<li>Vous devez charger le document de la declaration signé</li>';
-    $('#files_validation_error').show();
-    
-    valid = false;
-  }
-  if( document.getElementById("fileClausule").files.length == 0 ){
-    
-    files_error.innerHTML += '<li>Vous devez charger le document de la clausule signé</li>';
-    $('#files_validation_error').show();
-    valid = false;
-  }
-  return valid;
-}
-
-
-
-</script>
 {% endblock main %}
 
 <!-- TODO: VALIDATION FICHIER PDF ET TAILLE (COMBIEN?)-->
-<style>
-.loader {
-  border: 16px solid #f3f3f3; /* Light grey */
-  border-top: 16px solid #3498db; /* Blue */
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-  animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-  </style>

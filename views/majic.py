@@ -1,7 +1,8 @@
 import io
+import json
 
 from django.conf import settings
-
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import CreateView
@@ -9,6 +10,7 @@ from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.http import FileResponse
+from django.http import HttpResponse
 from datetime import datetime
 from datetime import date
 
@@ -23,6 +25,7 @@ from idgo_lme_majic.export_api import check_majic_export_api
 from idgo_lme_majic.export_api import check_url
 from idgo_lme_majic.export_api import download_file
 from idgo_lme_majic.utils import add_years
+
 
 @method_decorator(DECORATORS, name='dispatch')
 class MajicCreate(CreateView):
@@ -64,6 +67,7 @@ class MajicCreate(CreateView):
             'basemaps': BaseMaps.objects.all(),
             'organisations': organisations,
             'statut_and_url': self.statut_and_url,
+
             }
 
         # return render(self.request, self.template_name, context=context)
@@ -87,6 +91,7 @@ class MajicCreate(CreateView):
 
 
 # @method_decorator(DECORATORS, name='dispatch')
+@login_required()
 def majic_check(request):
     
     statut_and_url = {
@@ -105,18 +110,43 @@ def majic_check(request):
                 list_communes = list(organisation.jurisdiction.communes.values_list('code', flat=True))
                 str_list_communes = ','.join(list_communes)
                 secret = request.GET['secret']
+                # import pdb; pdb.set_trace()
                 mode = request.GET['mode']
+                if mode == '{}':
+                    mode = ''
                 statut_and_url = check_majic_export_api(str_list_communes,secret, request_id, mode)
     
     return JsonResponse(statut_and_url)
 
+
+# @method_decorator(DECORATORS, name='dispatch')
 def download_majic(request):
-    res = {}
+    response = {}
     if request.method == 'GET':
         if 'request_id' in request.GET:
             request_id = request.GET['request_id']
-            res = download_file(request_id)
-            file_zip = io.BytesIO(res.content)
-            content_type = res.headers['Content-type']
-            response = FileResponse(file_zip,  content_type=content_type)
+            type_ext = request.GET['type']
+            res = download_file(request_id, type_ext)
+            if res.status_code == 200:
+                file_zip = io.BytesIO(res.content)
+                content_type = res.headers['Content-type']
+                response = FileResponse(file_zip,  content_type=content_type)
+            else:
+                return JsonResponse({'success':False, 'errorMsg':'file error'})
     return response
+
+
+# @method_decorator(DECORATORS, name='dispatch')
+def geojson(request):
+    
+    geojson = {}
+    if request.method == 'GET':
+        if 'organisation' in request.GET:
+            organisation = request.GET['organisation']
+            try:
+                obj_organisation = Organisation.objects.get(pk=organisation)
+            except Organisation.DoesNotExist as e:
+                obj_organisation = []
+            geojson = json.loads(obj_organisation.jurisdiction.get_communes_as_feature_collection_geojson())
+            # import pdb; pdb.set_trace()
+    return JsonResponse(geojson)

@@ -80,28 +80,29 @@ class LmeCreate(CreateView):
         return redirect('idgo_lme_majic:lme')
 
 
-# @method_decorator(DECORATORS, name='dispatch')
-def majic_check(request):
+# # @method_decorator(DECORATORS, name='dispatch')
+# def majic_check(request):
     
-    statut_and_url = {
-        'statut': 'error',
-        'url':'',
-    }
-    if request.method == 'GET':
-        if 'statut' in request.GET:
-            if request.GET['statut'] == 'pending':
-                url = request.GET['url']
-                request_id = request.GET['request_id']
-                statut_and_url = check_url(url, request_id)
-            elif 'request_id' in request.GET:
-                request_id = request.GET['request_id']
-                organisation = Organisation.objects.get(pk=request.GET['organisation'])
-                list_communes = list(organisation.jurisdiction.communes.values_list('code', flat=True))
-                str_list_communes = ','.join(list_communes)
-                secret = request.GET['secret']
-                mode = request.GET['mode']
-                statut_and_url = check_majic_export_api(str_list_communes,secret, request_id, mode)
+#     statut_and_url = {
+#         'statut': 'error',
+#         'url':'',
+#     }
+#     if request.method == 'GET':
+#         if 'statut' in request.GET:
+#             if request.GET['statut'] == 'pending':
+#                 url = request.GET['url']
+#                 request_id = request.GET['request_id']
+#                 statut_and_url = check_url(url, request_id)
+#             elif 'request_id' in request.GET:
+#                 request_id = request.GET['request_id']
+#                 organisation = Organisation.objects.get(pk=request.GET['organisation'])
+#                 list_communes = list(organisation.jurisdiction.communes.values_list('code', flat=True))
+#                 str_list_communes = ','.join(list_communes)
+#                 secret = request.GET['secret']
+#                 mode = request.GET['mode']
+#                 import pdb; pdb.set_trace()
+#                 statut_and_url = check_majic_export_api(str_list_communes,secret, request_id, mode)
     
-    return JsonResponse(statut_and_url)
+#     return JsonResponse(statut_and_url)
 
 

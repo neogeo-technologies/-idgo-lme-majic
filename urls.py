@@ -6,6 +6,8 @@ from idgo_lme_majic.views import LmeCreate
 
 from idgo_lme_majic.views.majic import majic_check
 from idgo_lme_majic.views.majic import download_majic
+from idgo_lme_majic.views.majic import geojson
+
 # from django.urls import re_path
 
 app_name = 'idgo_lme_majic'
@@ -23,6 +25,8 @@ urlpatterns = [
    url(r'^majic_check/?$', majic_check, name='majic_check'),
 
    url(r'^download_majic/?$', download_majic, name='download_majic'),
+
+   url(r'^geojson/?$', geojson, name='geojson'),
    
    
 

@@ -5,26 +5,6 @@
 <link rel="stylesheet" href="{% static 'libs/leaflet/leaflet.css' %}"/>
 <div id="map" style="width: 100%; height: 400px; margin: 5px 0 20px 0;"></div>
 <script>
-  var organisation_pk = 0;
-  var map = undefined;
-  
-  (function() {
-    $('input:radio').change(
-      function(){
-          if ($(this).is(':checked')) {
-            organisation_pk = $(this).val()
-            console.log(organisation_pk)
-            
-            getMap(organisation_pk)
-          }
-      });
-    })();
-
-
-
-
-function getMap(organisation_pk) {
-  
   var layers = [];
   var baseMaps = {};
   {% if basemaps %}
@@ -48,58 +28,99 @@ function getMap(organisation_pk) {
     const ft = turf.pointOnSurface(feature);
     return L.point(ft.geometry.coordinates[1], ft.geometry.coordinates[0]);
   };
-  // let organisation_pk = $("input[type='radio']").val();
-  console.log("organisation_pk in function getMap", organisation_pk)
-  // let FeatureCollection2 = []
 
-  var FeatureCollection2 = {{ organisations.organisation_pk|safe}}
-  
-  console.log(FeatureCollection2)
-  
-  let FeatureCollection = {{ organisations.0.jurisdiction.get_communes_as_feature_collection_geojson|safe }}
-  
-  const communesLayers = L.geoJSON(FeatureCollection, {
-    style: {
-      className: 'geojsonFeature',
-      color: '#2e97ef',
-      fillColor: '#2e97ef',
-      stroke: true,
-      opacity: 1,
-      fillOpacity: 0.123,
-      weight: 1.5,
-      lineCap: 'butt',
-      lineJoin: 'round'
-    },
-    onEachFeature: function(feature, layer) {
-      layer.on({
-        mouseover : function(e) {
-          const layer = e.target;
-          const ft = turf.pointOnSurface(layer.feature);
-          const point = L.point(ft.geometry.coordinates[1], ft.geometry.coordinates[0]);
-          const content = layer.feature.properties.name + ' (' + layer.feature.properties.code + ')';
-          L.popup().setLatLng(L.latLng(point.x, point.y)).setContent(content).openOn(map);
-        },
-        mouseout : function(e) {
-          const layer = e.target;
-          map.closePopup();
-        }
-      });
+
+  function getMap(organisation_pk) {
+
+    params= {
+      'organisation': organisation_pk,
     }
+    axios({
+      method: 'get',
+      url: 'geojson',
+      params: params,
+      headers: {'Content-Type': 'multipart/form-data' }
+      })
+      .then(function (response) {
+        set_feature(response.data)
+      })
+      .catch(function (response) {
+          //handle error
+          console.log('erreur', response);
+          msg_error = `<li>Une erreur s'est produit lors de la recuperation de la carte.</li>`;
+          show_msg_error(msg_error)
+      });
+  }
+
+
+  function set_feature(FeatureCollection){
+    // let FeatureCollection = {{ organisations.0.jurisdiction.get_communes_as_feature_collection_geojson|safe }}
+    const communesLayers = L.geoJSON(FeatureCollection, {
+      style: {
+        className: 'geojsonFeature',
+        color: '#2e97ef',
+        fillColor: '#2e97ef',
+        stroke: true,
+        opacity: 1,
+        fillOpacity: 0.123,
+        weight: 1.5,
+        lineCap: 'butt',
+        lineJoin: 'round'
+      },
+      onEachFeature: function(feature, layer) {
+        layer.on({
+          mouseover : function(e) {
+            const layer = e.target;
+            const ft = turf.pointOnSurface(layer.feature);
+            const point = L.point(ft.geometry.coordinates[1], ft.geometry.coordinates[0]);
+            const content = layer.feature.properties.name + ' (' + layer.feature.properties.code + ')';
+            L.popup().setLatLng(L.latLng(point.x, point.y)).setContent(content).openOn(map);
+          },
+          mouseout : function(e) {
+            const layer = e.target;
+            map.closePopup();
+          }
+        });
+      }
+    });
+    layers.push(communesLayers);
+    
+    // map.addLayer(layers).fitBounds(communesLayers.getBounds());
+    
+    map = L
+      .map('map', {
+        'layers': layers
+      })
+      .fitBounds(communesLayers.getBounds())
+  }
+
+  $(document).ready(function() {
+    console.log('init')
+    let organisation_pk = 0;
+    let organisation = document.getElementById('0-organisation-input');
+    console.log(organisation)
+    if(organisation != null){
+      organisation_pk = organisation.value
+    }else{
+      // TROUVER UNE MANIERE MELLIEURE DE TROUVER LE PK MAJIK ORGANISATION PK
+      // organisation_pk = majic.organisation.pk
+      organisation_pk = 1
+    }
+    getMap(organisation_pk)
+    
   });
-  layers.push(communesLayers);
 
-  map = L
-    .map('map', {
-      'layers': layers
-    })
-    .fitBounds({% if bounds %}{{ bounds|safe }}{% else %}communesLayers.getBounds(){% endif %})
-}
+    (function() {
+      $('input:radio').change(
+        function(){
+            map.remove();
+            if ($(this).is(':checked')) {
+              organisation_pk = $(this).val()
+              getMap(organisation_pk)
+            }
+        });
+      })();
 
-getMap(organisation_pk)
 
-  map.on('click', function(){
-    console.log('remove? ')
-    //remove GrayScale
-  });
 
 </script>

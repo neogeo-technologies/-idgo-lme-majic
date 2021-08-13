@@ -2,7 +2,7 @@ from django.conf import settings
 import requests
 
 
-def check_majic_export_api (communes, secret, request_id, mode=None) :
+def check_majic_export_api (communes, secret, request_id, mode={}) :
     """
     Here in this method we connect to the API EXTRACT, 
     @param   'communes': liste de communes, separés par virgules
@@ -32,6 +32,10 @@ def check_majic_export_api (communes, secret, request_id, mode=None) :
     res = requests.post(url,
                         data= payload,
                         )
+    import logging
+    logging.error(res.text)
+    logging.error(url)
+
     if res.status_code == 200:
         try:
             url_tmp = res.text.split('at ')[1].split('?')
@@ -77,14 +81,18 @@ def check_url(url, request_id):
     }
     return json_res
 
-def download_file(request_id):
-    
-    url = settings.MAJIC_API + 'download_majic'
+def download_file(request_id, type_ext):
+    import logging
+    logging.error(type_ext)
+    url = settings.MAJIC_API + 'download_' + type_ext
 
     params = {'request_id': request_id}
     res = requests.get(url, params= params)
     # REMOVE IN PROD
-    import logging
+    
     logging.error(res)
+    logging.error(params)
+    logging.error(res.status_code)
+    logging.error(url)
 
     return res
