@@ -116,7 +116,6 @@ def download_majic(request):
         if 'request_id' in request.GET:
             request_id = request.GET['request_id']
             res = download_file(request_id)
-            import pdb; pdb.set_trace()
             file_zip = io.BytesIO(res.content)
             content_type = res.headers['Content-type']
             response = FileResponse(file_zip,  content_type=content_type)

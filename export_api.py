@@ -16,7 +16,12 @@ def check_majic_export_api (communes, secret, request_id, mode=None) :
     """
     
     statut_and_url = {}
-    url = settings.MAJIC_EXPORT_URL
+
+    if mode:
+        url = settings.MAJIC_API + 'export_majic'
+    else:
+        url = settings.MAJIC_API + 'export_lme'
+
     payload = {
         'communes': communes, 
         'secret': secret,
@@ -74,7 +79,7 @@ def check_url(url, request_id):
 
 def download_file(request_id):
     
-    url = settings.MAJIC_DOWNLOAD_URL
+    url = settings.MAJIC_API + 'download_majic'
 
     params = {'request_id': request_id}
     res = requests.get(url, params= params)
