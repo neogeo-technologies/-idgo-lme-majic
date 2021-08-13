@@ -7,24 +7,23 @@
 <script>
   var organisation_pk = 0;
   var map = undefined;
-  $('input:radio').change(
-    function(){
-        if ($(this).is(':checked')) {
-          organisation_pk = $(this).val()
-          console.log(organisation_pk)
-          
-          getMap(organisation_pk)
-        }
-    });
+  
+  (function() {
+    $('input:radio').change(
+      function(){
+          if ($(this).is(':checked')) {
+            organisation_pk = $(this).val()
+            console.log(organisation_pk)
+            
+            getMap(organisation_pk)
+          }
+      });
+    })();
+
+
+
+
 function getMap(organisation_pk) {
-  // $(function() {
-  // console.log(map)
-  // if (typeof map !== 'undefined') {
-  //   console.log(map)
-  //   map.eachLayer(function (layer) {
-  //     map.removeLayer(layer);
-  //   });
-  // }
   
   var layers = [];
   var baseMaps = {};
@@ -51,8 +50,11 @@ function getMap(organisation_pk) {
   };
   // let organisation_pk = $("input[type='radio']").val();
   console.log("organisation_pk in function getMap", organisation_pk)
-  // console.log("organisations.organisation_pk", {{ organisations.organisation_pk}})
+  // let FeatureCollection2 = []
+
+  var FeatureCollection2 = {{ organisations.organisation_pk|safe}}
   
+  console.log(FeatureCollection2)
   
   let FeatureCollection = {{ organisations.0.jurisdiction.get_communes_as_feature_collection_geojson|safe }}
   
@@ -92,4 +94,12 @@ function getMap(organisation_pk) {
     })
     .fitBounds({% if bounds %}{{ bounds|safe }}{% else %}communesLayers.getBounds(){% endif %})
 }
+
+getMap(organisation_pk)
+
+  map.on('click', function(){
+    console.log('remove? ')
+    //remove GrayScale
+  });
+
 </script>

@@ -2,60 +2,411 @@
 
 {% load bootstrap3 %}
 {% load static %}
-
-
+{% load idgo_lme_majic_tags %}
 
 {% block main %}
 <div class="container">
   <div class="row">
-    <div class="col-md-offset-2 col-md-8">
+    <div class="alert alert-danger" style="display: none;" id="files_validation_error"></div>
+      <div class="col-md-offset-1 col-md-10">
       <h1>Espace LME</h1>
       <p>
         Les fichiers fonciers standards communément désignés fichiers LME
         comportent des renseignements relatifs aux propriétés bâties et non bâties.
         <br>
         L'accès et la délivrance des données cadastrales ont été organisés dès la création du cadastre. Outre les plans,
-        <br>
         dont une collection annuelle est mise gratuitement à la disposition des communes sous forme de papier ou dématérialisée,
         les collectivités peuvent se procurer les fichiers annuels actualisés des données foncières, disponibles à compter de 
         la fin du 1er semestre. Ces fichiers, qui présentent la situation au 1er janvier, sont au nombre de cinq :
       </p>
-      <div>
-        <a href="{% static "Declaration_du_Delegue_a_la_Protection_des_Donnees_Personnelles.pdf" %}" 
-          class="card-link">Clause de confidentialité
-        </a>
-      </div>
-      <div>
-        <a href="{% static "Clause_de_confidentialite.pdf" %}" 
-          class="card-link">Déclaration du Délégué à la Protection des Données Personnelles
-        </a>
-      </div>
-      <br/>
-      <div class="card" >
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="card-link">Clause de confidentialité</a>
-          <a href="#" class="card-link">Déclaration du Délégué à la Protection des Données Personnelles</a>
-        </div>
-      </div>
+      
+        {% if lmes  %}
+        <hr>
+          <h4><b>EXTRACTION DEMANDÉE</b></h4>
+          {% for lme in lmes %}
+            <div class="row">
+              <div class="col-sm-5">
+                <h5>Accès valide jusqu'au 
+                  <b>{{lme.date_expiration_lme}}</b>
+                </h5>
+              </div>
+              <div class="col-sm-7">
+                  <h5)>TERRITOIRE DE COMPÉTENCE</h5>
+              </div>
+            </div>
+            <form method="POST" action="" id="download-form">
+              {% csrf_token %}
+              <!-- ID User 
+                 Mot de passe de cryptage (à genener automatiquement lors de l'envoi, et à indiquer à l utilisateur dans l'interface)
+                 Liste des communes du territoire de compétence
+                 Un jeton applicatif (le meme à chaque fois, pour securiser la demande)
+                 l' API renverra ud ID de demande
+              -->
+              <input 
+                id="organisation" 
+                name="organisation" 
+                type="hidden" 
+                value="{{lme.organisation.pk}}">
+              
+              <input id="secret" name="secret" type="hidden" value="test">
+              <input id="request_id" name="request_id" type="hidden" value="">
+              <input id="download_file" name="download_file" type="hidden" value="true">
 
-      <form method="post" action="">
-        {% csrf_token %}
-        <!-- {% bootstrap_field form.majic %} -->
-        <!-- <p>Entrez le mot de passe ci-dessous pour afin d'initialiser le compte utilisateur.</p> -->
-        <div class="row">
-          <!-- <div class="col-xs-12 col-sm-12">
-            {% bootstrap_field form.date_expiration_majic %}
-          </div> -->
-        </div>
-        <div class="buttons-on-the-right-side">
-          <a class="btn btn-default" href="./">Annuler</a>
-          <button type="submit" class="btn btn-primary">Valider</button>
-        </div>
-      </form>
+              <div class="buttons-on-the-right-side">
+                <button id="btn-download-form" type="submit" class="btn btn-primary">Demande de téléchargement</button>
+              </div>
+            </form>
+            <div id='statut-id-{{ forloop.counter0 }}'></div>
+          {% endfor %}
+        {% endif %}
+        <br>
+        {% if lmes|length == 0%}
+          {% if organisations  %}
+            <div style="padding-bottom: 5em;">
+              <hr>
+              <div>
+                <h4><b>DEMANDER EXTRACTION</b></h4>
+                <p>
+                  Pour demander une extraction LME
+                  les signer et les ajouter dans le formulaire ci-dessus.
+                </p>
+                <h5><b>TÉLÉCHARGER DOCUMENTS À SIGNER</b></h5>
+                <div>
+                  <a href="{% static "Declaration_du_Delegue_a_la_Protection_des_Donnees_Personnelles.pdf" %}" target="_blank"
+                    class="card-link">Clause de confidentialité
+                  </a>
+                </div>
+                <div>
+                  <a href="{% static "Clause_de_confidentialite.pdf" %}" target="_blank"
+                    class="card-link">Déclaration du Délégué à la Protection des Données Personnelles
+                  </a>
+                </div>
+              </div>
+            <br>
+            <div>
+              <form method="POST" action="" id="lme">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-sm-5">
+                    {%if organisations|length == 1%}
+                      <h5>ORGANISATION</h5>
+                    {%else%}
+                      <h5>ORGANISATIONS</h5>
+                    {%endif %}
+                    {{profile.jurisdiction}}
+                    <div class="list-group" id="id_list_groups">
+                      {% for organisation in organisations %}
+                        {% if organisation  %}
+                        <div>
+                          <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            name="organisation" 
+                            id="{{ forloop.counter0 }}-input" 
+                            value="{{ organisation.pk }}">
+                          <label class="form-check-label" for="organisation">
+                            {{ organisation.legal_name }} - {{ organisation.jurisdiction }}
+                          </label>
+                        </div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="col-sm-7">
+                    <h5)>TERRITOIRE DE COMPÉTENCE</h5>
+                    {% if organisation  %}
+                      {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
+                    {% endif %}
+                  </div>
+              
+                  <br>
+                  <div class="col-sm-10" style="padding-left: 2em;">
+                    <div class="row">
+                      <div class="mb-3">
+                        <label for="formFile" class="form-label">Ajouter Clause de confidentialité signé</label>
+                        <div>
+                          <div id="list_file_clausule"></div>
+                          <input 
+                            type="button" 
+                            class="btn btn-primary" 
+                            id="loadFileXml" 
+                            value="Parcourir..." 
+                            onclick="document.getElementById('fileClausule').click();" />
+                          <input type="file" style="display:none;" id="fileClausule" name="fileClausule"/>
+                        </div>
+                      </div>
+                    <div class="mb-3">
+                      <label for="formFile" class="form-label">Ajouter Déclaration du Délégué à la Protection des Données Personnelles signé</label>
+                      <div>
+                        <div id="list_file_declaration"></div>
+                        <input 
+                          type="button" 
+                          class="btn btn-primary" 
+                          id="loadFileXml" 
+                          value="Parcourir..." 
+                          onclick="document.getElementById('fileDeclaration').click();" />
+                        <input type="file" style="display:none;" id="fileDeclaration" name="fileDeclaration"/>
+                      </div>
+                    </div>
+                  </div>
+                  <br>
+                  <input id="lme" name="lme" type="hidden" value="true">
+                  <div class="buttons-on-the-right-side">
+                    <button type="submit" class="btn btn-primary">Envoyer demande</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          
+            </div>
+          {% endif %}
+        {% endif %}
     </div>
   </div>
 </div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+
+function uuidv4() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+}
+
+function setCookie(cname, cvalue, exdays) {
+  var d = new Date();
+  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000)); // En jours
+  var expires = "expires="+d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var ca = decodedCookie.split(';');
+  for(var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+function checkCookie(cname) {
+  var extraction_ok = getCookie(cname);
+  if (extraction_ok != "") {
+    return extraction_ok;
+  }
+  else { return false}
+}
+
+
+function check_extract(statut="", url=""){
+
+  var organisation = document.getElementById('organisation');
+  var secret = document.getElementById('secret');
+  var request_id = document.getElementById('request_id');
+  var mode = '';
+  params= {
+    'organisation': organisation.value,
+    'secret': secret.value,
+    'request_id': request_id.value,
+    'mode': mode,
+    'statut': statut,
+    'url': url,
+  }
+  axios({
+    method: 'get',
+    url: 'majic_check',
+    params: params,
+    headers: {'Content-Type': 'multipart/form-data' }
+    })
+    .then(function (response) {
+        let response_html = '';
+        // IF RESPONSE STATUT OK
+        if (response.data.statut == 'OK'){
+          setCookie('extraction-lme', secret.value + response.data.url, 1);
+          response_html = response_ok(response.data.url, secret.value, request_id.value)
+          }
+        // IF RESPONSE STATUT PENDING
+        if (response.data.statut == 'pending'){
+        // FOR TEST
+        // if (response.data.statut == 'OK'){
+
+          response_html = `<h5> Statut de la demande : En cours</h5>
+                          La demande ça va relancer dans 1 minute.
+                          <div class="loader"></div>`
+          setTimeout(function(){ check_extract('pending', response.data.url); }, 3000);
+          // relance_function()
+        }
+        // IF RESPONSE STATUT ERROR
+        if (response.data.statut == 'error'){
+          response_html = `<h5> Un erreur s'est produit lors de votre demande. Merci Contactez aux administrateurs du site.</h5>
+                          La demande ça va relancer dans 1 minute.
+                          <div class="spinner-border" role="status">
+                          <div class="loader"></div>`
+          setTimeout(function(){ check_extract()}, 3000);
+        }
+        set_response(response_html)
+       
+    })
+    .catch(function (response) {
+        //handle error
+        console.log('erreur', response);
+    });
+}
+
+function response_ok(url, secret, request_id){
+  return `<h5> Télécharger l'extraction : 
+          <a href="download_majic?request_id=${request_id}">
+            Fichier zip
+          </a>
+        </h5>
+        Code secret: ${secret}`
+}
+
+function set_response(response_html){
+  $('#statut-id-0').html(`
+    ${response_html}
+  `);
+  hiddenElement("download-form")
+}
+
+  $("input:checkbox").on('click', function() {
+    // in the handler, 'this' refers to the box clicked on
+    var $box = $(this);
+    if ($box.is(":checked")) {
+      // the name of the box is retrieved using the .attr() method
+      // as it is assumed and expected to be immutable
+      var group = "input:checkbox[name='" + $box.attr("name") + "']";
+      // the checked state of the group/box on the other hand will change
+      // and the current value is retrieved using .prop() method
+      $(group).prop("checked", false);
+      $box.prop("checked", true);
+    } else {
+      $box.prop("checked", false);
+    }
+  });
+
+  var fileDeclaration = document.getElementById('fileDeclaration');
+  var listFileDeclaration = document.getElementById('list_file_declaration');
+  var fileClausule = document.getElementById('fileClausule');
+  var listFileClausule = document.getElementById('list_file_clausule');
+  
+  if (fileDeclaration !== null && fileDeclaration.value == '') {
+    fileDeclaration.onchange = function () {
+      var files = Array.from(this.files);
+      files = files.map(file => file.name);
+      listFileDeclaration.innerHTML = files.join('<br/>');
+    }
+  }
+  if (fileClausule !== null && fileClausule.value == '') {
+    fileClausule.onchange = function () {
+      var files = Array.from(this.files);
+      files = files.map(file => file.name);
+      listFileClausule.innerHTML = files.join('<br/>');
+    }
+  }
+
+
+$(document).ready(function() {
+  var cookieExtraction = checkCookie('extraction-lme');
+  if (cookieExtraction != false) {
+    let secret = cookieExtraction.substring(0, 6)
+    let request_id = cookieExtraction.split("request_id=")[1];
+    response_html = response_ok(cookieExtraction.substring(6), cookieExtraction.substring(0, 6), request_id)
+    set_response(response_html)
+  }
+  
+
+  // Lme user form
+  const lme_form = document.getElementById('lme');
+  if (lme_form) {
+    lme_form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (validateLMEForm()) {
+        e.currentTarget.submit();
+      }
+    });
+  }
+
+  // Form for download files
+  const dowload_form = document.getElementById('download-form');
+  if (dowload_form !== null) {
+    // INIT UUID FOR FORM EXTRACTION
+    var request_id = document.getElementById('request_id').value = uuidv4();
+    document.getElementById('secret').value = request_id.substring(6, 12);
+
+    dowload_form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (validateDowloadForm()) {
+        check_extract()
+      }
+    });
+  }
+});
+
+function hiddenElement(name){
+  document.getElementById(name).style.display = 'None';
+  }
+
+
+// Download form validation
+function validateDowloadForm() {
+  // Validation flag
+  let valid = true;
+  // Something
+  return valid;
+
+}
+
+// Majic form validation
+function validateLMEForm() {
+  // Validation flag
+  let valid = true;
+  const files_error = document.getElementById('files_validation_error');
+  console.log(files_error)
+  files_error.innerHTML = `<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                           </button>`;
+
+  if( document.getElementById("fileDeclaration").files.length == 0 ){
+    files_error.innerHTML += '<li>Vous devez charger le document de la declaration signé</li>';
+    $('#files_validation_error').show();
+    
+    valid = false;
+  }
+  if( document.getElementById("fileClausule").files.length == 0 ){
+    
+    files_error.innerHTML += '<li>Vous devez charger le document de la clausule signé</li>';
+    $('#files_validation_error').show();
+    valid = false;
+  }
+  return valid;
+}
+
+
+
+</script>
 {% endblock main %}
+
+<!-- TODO: VALIDATION FICHIER PDF ET TAILLE (COMBIEN?)-->
+<style>
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+  </style>

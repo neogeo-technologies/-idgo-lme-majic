@@ -18,6 +18,8 @@ class LmeForm(forms.ModelForm):
     class Meta:
         model = UserMajicLme
         fields = [
+            'user',
             'majic',
             'date_expiration_lme',
+            'organisation',
         ]

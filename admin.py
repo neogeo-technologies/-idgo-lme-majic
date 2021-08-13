@@ -5,9 +5,15 @@ from idgo_lme_majic.filters import UserMajicLmeFilter
 # Register your models here.
 
 User = get_user_model()
+def remove_registre(modeladmin, request, queryset):
+    for e in queryset:
+
+        e.delete()
+remove_registre.short_description = "Supprimer registre MAJIC/LME"
+
 
 class UserMajicLmeAdmin(admin.ModelAdmin):
-  
+    actions = [remove_registre]
     list_display = (
                     'user',
                     'majic',
