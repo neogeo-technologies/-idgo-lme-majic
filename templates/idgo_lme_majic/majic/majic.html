@@ -20,6 +20,7 @@
         <hr>
           <h4><b>FAIRE UNE EXTRACTION</b></h4>
           {% for majic in majics %}
+            {%if majic.majic%}
             <div class="row">
               <div class="col-sm-5">
                 <h5>Accès valide jusqu'au 
@@ -28,10 +29,10 @@
               </div>
               <div class="col-sm-7">
                   <h5)>TERRITOIRE DE COMPÉTENCE</h5>
-                    {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
+                  {% include "idgo_lme_majic/organisation/jurisdiction.html" with majic=majic only%}
               </div>
             </div>
-            <form method="POST" action="" id="download-form">
+            <form method="POST" action="" enctype="multipart/form-data" id="download-form">
               {% csrf_token %}
               <div class="row">
                 <div class="col-sm-5">
@@ -96,6 +97,9 @@
               </div>
             </form>
             <div id='statut-id-{{ forloop.counter0 }}'></div>
+            {%else%}
+              La demande d'extraction est en validation pour les administrateurs.
+            {%endif%}
           {% endfor %}
         {% endif %}
       
@@ -136,18 +140,22 @@
                     {{profile.jurisdiction}}
                     <div class="list-group" id="id_list_groups">
                       {% for organisation in organisations %}
-                        {% if organisation  %}
-                        <div>
-                          <input 
-                            class="form-check-input" 
-                            type="radio" 
-                            name="organisation" 
-                            id="{{ forloop.counter0 }}-organisation-input" 
-                            value="{{ organisation.pk }}">
-                          <label class="form-check-label" for="organisation">
-                            {{ organisation.legal_name }} - {{ organisation.jurisdiction }}
-                          </label>
-                        </div>
+                        {% if organisation.jurisdiction  %}
+                        <fieldset >
+                          <div>
+                            <input 
+                              class="form-check-input" 
+                              type="radio" 
+                              name="organisation" 
+                              id="{{ forloop.counter0 }}-organisation-input" 
+                              value="{{ organisation.pk }}">
+                            <label class="form-check-label" for="organisation">
+                              {{ organisation.legal_name }} - {{ organisation.jurisdiction }}
+                            </label>
+                          </div>
+                        </fieldset>
+                        {%else%}
+                        <b>{{ organisation.legal_name }}</b> - Le territoire de compétence n'est pas défini.
                         {% endif %}
                       {% endfor %}
                     </div>

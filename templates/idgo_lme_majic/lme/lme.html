@@ -24,34 +24,39 @@
         <hr>
           <h4><b>EXTRACTION DEMANDÉE</b></h4>
           {% for lme in lmes %}
-            <div class="row">
-              <div class="col-sm-5">
-                <h5>Accès valide jusqu'au 
-                  <b>{{lme.date_expiration_lme}}</b>
-                </h5>
+            {%if lme.lme%}
+              <div class="row">
+                <div class="col-sm-5">
+                  <h5>Accès valide jusqu'au 
+                    <b>{{lme.date_expiration_lme}}</b>
+                  </h5>
+                </div>
+                <div class="col-sm-7">
+                    <h5)>TERRITOIRE DE COMPÉTENCE</h5>
+                    {% include "idgo_lme_majic/organisation/jurisdiction.html" with lme=lme only%}
+                </div>
               </div>
-              <div class="col-sm-7">
-                  <h5)>TERRITOIRE DE COMPÉTENCE</h5>
-              </div>
-            </div>
-            <form method="POST" action="" id="download-form">
-              {% csrf_token %}
-              <input 
-                id="organisation" 
-                name="organisation" 
-                type="hidden" 
-                value="{{lme.organisation.pk}}">
-              
-              <input id="secret" name="secret" type="hidden" value="test">
-              <input id="mode" name="mode" type="hidden" value="">
-              <input id="request_id" name="request_id" type="hidden" value="">
-              <input id="download_file" name="download_file" type="hidden" value="true">
+              <form method="POST" action="" id="download-form">
+                {% csrf_token %}
+                <input 
+                  id="organisation" 
+                  name="organisation" 
+                  type="hidden" 
+                  value="{{lme.organisation.pk}}">
+                
+                <input id="secret" name="secret" type="hidden" value="test">
+                <input id="mode" name="mode" type="hidden" value="">
+                <input id="request_id" name="request_id" type="hidden" value="">
+                <input id="download_file" name="download_file" type="hidden" value="true">
 
-              <div class="buttons-on-the-right-side">
-                <button id="btn-download-form" type="submit" class="btn btn-primary">Demande de téléchargement</button>
-              </div>
-            </form>
-            <div id='statut-id-{{ forloop.counter0 }}'></div>
+                <div class="buttons-on-the-right-side">
+                  <button id="btn-download-form" type="submit" class="btn btn-primary">Demande de téléchargement</button>
+                </div>
+              </form>
+              <div id='statut-id-{{ forloop.counter0 }}'></div>
+            {%else%}
+              La demande d'extraction est en validation pour les administrateurs.
+            {%endif%}
           {% endfor %}
         {% endif %}
         <br>
@@ -79,7 +84,7 @@
               </div>
             <br>
             <div>
-              <form method="POST" action="" id="majic-lme-form">
+              <form method="POST" action="" enctype="multipart/form-data" id="majic-lme-form">
                 {% csrf_token %}
                 <div class="row">
                   <div class="col-sm-5">
@@ -91,7 +96,7 @@
                     {{profile.jurisdiction}}
                     <div class="list-group" id="id_list_groups">
                       {% for organisation in organisations %}
-                        {% if organisation  %}
+                        {% if organisation.jurisdiction  %}
                         <fieldset >
                           <div>
                             <input 
@@ -105,14 +110,16 @@
                             </label>
                           </div>
                         </fieldset>
+                        {%else%}
+                        <b>{{ organisation.legal_name }}</b> - Le territoire de compétence n'est pas défini.
                         {% endif %}
                       {% endfor %}
                     </div>
                   </div>
                   <div class="col-sm-7">
                     <h5)>TERRITOIRE DE COMPÉTENCE</h5>
-                    {% if organisation  %}
-                      {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
+                    {% if organisations  %}
+                      {% include "idgo_lme_majic/organisation/jurisdiction.html" %}
                     {% endif %}
                   </div>
               

@@ -1,5 +1,6 @@
 from django.conf import settings
 import requests
+import logging
 
 
 def check_majic_export_api (communes, secret, request_id, mode={}) :
@@ -16,6 +17,7 @@ def check_majic_export_api (communes, secret, request_id, mode={}) :
     """
     
     statut_and_url = {}
+    logging.error(mode)
 
     if mode:
         url = settings.MAJIC_API + 'export_majic'
@@ -32,7 +34,7 @@ def check_majic_export_api (communes, secret, request_id, mode={}) :
     res = requests.post(url,
                         data= payload,
                         )
-    import logging
+    
     logging.error(res.text)
     logging.error(url)
 

@@ -95,16 +95,25 @@
   }
 
   $(document).ready(function() {
-    console.log('init')
     let organisation_pk = 0;
     let organisation = document.getElementById('0-organisation-input');
-    console.log(organisation)
     if(organisation != null){
       organisation_pk = organisation.value
     }else{
-      // TROUVER UNE MANIERE MELLIEURE DE TROUVER LE PK MAJIK ORGANISATION PK
-      // organisation_pk = majic.organisation.pk
-      organisation_pk = 1
+      let downloadForm = document.getElementById('download-form');
+      if (downloadForm !== null) {
+        var maj = {{majic.organisation.pk}}
+        console.log(maj)
+        var lme = {{lme.organisation.pk}}
+        console.log(lme)
+        if (maj != undefined){
+          organisation_pk = maj
+        }
+        else if(lme != undefined){
+          organisation_pk = lme
+        }
+        
+      }
     }
     getMap(organisation_pk)
     
@@ -113,11 +122,14 @@
     (function() {
       $('input:radio').change(
         function(){
+          // console.log(map)
+          if(map){
             map.remove();
-            if ($(this).is(':checked')) {
-              organisation_pk = $(this).val()
-              getMap(organisation_pk)
-            }
+          }
+          if ($(this).is(':checked')) {
+            organisation_pk = $(this).val()
+            getMap(organisation_pk)
+          }
         });
       })();
 

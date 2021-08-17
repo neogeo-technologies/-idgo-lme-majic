@@ -11,9 +11,18 @@ def remove_registre(modeladmin, request, queryset):
         e.delete()
 remove_registre.short_description = "Supprimer registre MAJIC/LME"
 
+def to_majic(modeladmin, request, queryset):
+    # for e in queryset:
+    queryset.update(majic=True)
+to_majic.short_description = "Valider demande MAJIC"
+
+def to_lme(modeladmin, request, queryset):
+    queryset.update(lme=True)
+to_lme.short_description = "Valider demande LME"
+
 
 class UserMajicLmeAdmin(admin.ModelAdmin):
-    actions = [remove_registre]
+    actions = [remove_registre, to_majic, to_lme]
     list_display = (
                     'user',
                     'majic',

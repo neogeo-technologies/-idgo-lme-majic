@@ -1,4 +1,5 @@
 from datetime import datetime
+import mimetypes
 
 from django.conf import settings
 from django.http import JsonResponse
@@ -9,6 +10,7 @@ from django.views.generic.edit import CreateView
 from idgo_admin.models import Organisation
 from idgo_admin.models import BaseMaps
 from idgo_admin.models import Profile
+from idgo_admin.models.mail import send_demande_extraction_majic_lme
 
 from idgo_lme_majic.models import UserMajicLme
 from idgo_lme_majic.forms import MajicForm
@@ -71,38 +73,14 @@ class LmeCreate(CreateView):
                 instance = form.save(commit=False)
                 instance.user = user
                 instance.date_expiration_lme = add_years(datetime.today(), 1)
-                instance.lme = True
                 instance.save()
-                
-                # TODO: ENVOYER MAIL AUX ADMINS AVEC LES FICHIER in REQUEST.FILES 
-                #Mail.depot_demande()
+                fileDeclaration = request.FILES['fileDeclaration']
+                fileClausule = request.FILES['fileClausule']
+                files = [
+                    fileDeclaration,
+                    fileClausule,
+                ]
+                url = instance.get_full_admin_url()
+                send_demande_extraction_majic_lme(instance.user, 'LME', instance.organisation, url, files)
 
         return redirect('idgo_lme_majic:lme')
-
-
-# # @method_decorator(DECORATORS, name='dispatch')
-# def majic_check(request):
-    
-#     statut_and_url = {
-#         'statut': 'error',
-#         'url':'',
-#     }
-#     if request.method == 'GET':
-#         if 'statut' in request.GET:
-#             if request.GET['statut'] == 'pending':
-#                 url = request.GET['url']
-#                 request_id = request.GET['request_id']
-#                 statut_and_url = check_url(url, request_id)
-#             elif 'request_id' in request.GET:
-#                 request_id = request.GET['request_id']
-#                 organisation = Organisation.objects.get(pk=request.GET['organisation'])
-#                 list_communes = list(organisation.jurisdiction.communes.values_list('code', flat=True))
-#                 str_list_communes = ','.join(list_communes)
-#                 secret = request.GET['secret']
-#                 mode = request.GET['mode']
-#                 import pdb; pdb.set_trace()
-#                 statut_and_url = check_majic_export_api(str_list_communes,secret, request_id, mode)
-    
-#     return JsonResponse(statut_and_url)
-
-

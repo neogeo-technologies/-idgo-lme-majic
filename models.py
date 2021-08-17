@@ -1,6 +1,8 @@
 from django.conf import settings
-
 from django.db import models
+from django.urls import reverse
+from django.contrib.contenttypes.models import ContentType
+
 from idgo_admin.models import Organisation
 
 # Create your models here.
@@ -23,3 +25,10 @@ class UserMajicLme(models.Model):
 
     organisation = models.ForeignKey(
         'idgo_admin.Organisation', models.CASCADE, db_column='organisation', related_name='organisation',  default=False)
+
+    def get_admin_url(self):
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        return reverse("admin:%s_%s_change" % (content_type.app_label, content_type.model), args=(self.id,))
+
+    def get_full_admin_url(self):
+        return settings.DOMAIN_NAME + self.get_admin_url()

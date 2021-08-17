@@ -17,6 +17,7 @@ from datetime import date
 from idgo_admin.models import Organisation
 from idgo_admin.models import BaseMaps
 from idgo_admin.models import Profile
+from idgo_admin.models.mail import send_demande_extraction_majic_lme
 
 from idgo_lme_majic.forms import MajicForm
 from idgo_lme_majic.models import UserMajicLme
@@ -81,11 +82,15 @@ class MajicCreate(CreateView):
                 instance = form.save(commit=False)
                 instance.user = user
                 instance.date_expiration_majic = add_years(datetime.today(), 1)
-                instance.majic = True
                 instance.save()
-                
-                # TODO: ENVOYER MAIL AUX ADMINS AVEC LES FICHIER in REQUEST.FILES 
-                #Mail.depot_demande()
+                fileDeclaration = request.FILES['fileDeclaration']
+                fileClausule = request.FILES['fileClausule']
+                files = [
+                    fileDeclaration,
+                    fileClausule,
+                ]
+                url = instance.get_full_admin_url()
+                send_demande_extraction_majic_lme(instance.user, 'MAJIC', instance.organisation, url, files)
 
         return redirect('idgo_lme_majic:majic')
 

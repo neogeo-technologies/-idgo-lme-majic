@@ -9,7 +9,7 @@ function uuidv4() {
     var d = new Date();
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000)); // En jours
     var expires = "expires="+d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/; Secure";
   }
   
   function getCookie(cname) {
@@ -42,6 +42,7 @@ function uuidv4() {
     var secret = document.getElementById('secret');
     var request_id = document.getElementById('request_id');
     var mode = document.getElementById('mode');
+    console.log(mode.value)
     let type = 'lme';
     if (mode)
         type = 'majic';
@@ -49,7 +50,7 @@ function uuidv4() {
       'organisation': organisation.value,
       'secret': secret.value,
       'request_id': request_id.value,
-      'mode': mode,
+      'mode': mode.value,
       'statut': statut,
       'url': url,
     }
@@ -68,13 +69,9 @@ function uuidv4() {
             }
           // IF RESPONSE STATUT PENDING
           if (response.data.statut == 'pending'){
-          // FOR TEST
-          // if (response.data.statut == 'OK'){
-  
             response_html = `<h5> Statut de la demande : En cours</h5>
                             <div class="loader"></div>`
-            setTimeout(function(){ check_extract('pending', response.data.url); }, 3000);
-            // relance_function()
+            setTimeout(function(){ check_extract('pending', response.data.url); }, 30000);
           }
           // IF RESPONSE STATUT ERROR
           if (response.data.statut == 'error'){
@@ -222,13 +219,11 @@ function uuidv4() {
     if( document.getElementById("fileDeclaration").files.length == 0 ){
       msg_error = '<li>Vous devez charger le document de la declaration signé.</li>';
       show_msg_error(msg_error);
-      // $('#msg-validation-error').show();
       valid = false;
     }
     if( document.getElementById("fileClausule").files.length == 0 ){
       msg_error = '<li>Vous devez charger le document de la clausule signé.</li>';
       show_msg_error(msg_error);
-      // $('#msg-validation-error').show();
       valid = false;
     }
     
