@@ -2,7 +2,6 @@
 
 {% load bootstrap3 %}
 {% load static %}
-{% load idgo_lme_majic_tags %}
 
 {% block main %}
 <div class="container">
@@ -13,7 +12,7 @@
         <p>
           L'espace MAJIC III (Mise A Jour des Informations Cadastrales) comportent des renseignements relatifs aux propriétés bâties et non bâties.
           <br>
-          L'accès et la délivrance des données cadastrales ont été organisés dès la création du cadastre...
+          L'accès et la délivrance des données cadastrales ont été organisés dès la création du cadastre.
         </p>
         
         {% if majics  %}
@@ -29,7 +28,7 @@
               </div>
               <div class="col-sm-7">
                   <h5)>TERRITOIRE DE COMPÉTENCE</h5>
-                  {% include "idgo_lme_majic/organisation/jurisdiction.html" with majic=majic only%}
+                  {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
               </div>
             </div>
             <form method="POST" action="" enctype="multipart/form-data" id="download-form">
@@ -75,12 +74,6 @@
                   </fieldset>
                 </div>
               </div>
-              <!-- ID User 
-                 Mot de passe de cryptage (à genener automatiquement lors de l'envoi, et à indiquer à l utilisateur dans l'interface)
-                 Liste des communes du territoire de compétence
-                 Un jeton applicatif (le meme à chaque fois, pour securiser la demande)
-                 l' API renverra ud ID de demande
-              -->
               <input 
                 id="organisation" 
                 name="organisation" 
@@ -88,10 +81,7 @@
                 value="{{majic.organisation.pk}}">
               <input id="secret" name="secret" type="hidden" value="">
               <input id="request_id" name="request_id" type="hidden" value="">
-
               <input id="download_file" name="download_file" type="hidden" value="true">
-
-
               <div class="buttons-on-the-right-side">
                 <button id="btn-download-form" type="submit" class="btn btn-primary">Demande de téléchargement</button>
               </div>
@@ -168,39 +158,41 @@
                   </div>
               
                   <br>
-                  <div class="col-sm-10" style="padding-left: 2em;">
-                    <div class="row">
+                  <div id="organisation-inputs">
+                    <div class="col-sm-10" style="padding-left: 2em;">
+                      <div class="row">
+                        <div class="mb-3">
+                          <label for="formFile" class="form-label">Ajouter Clause de confidentialité signé</label>
+                          <div>
+                            <div id="list_file_clause"></div>
+                            <input 
+                              type="button" 
+                              class="btn btn-primary" 
+                              id="loadFileXml" 
+                              value="Parcourir..." 
+                              onclick="document.getElementById('fileClause').click();" />
+                            <input type="file" style="display:none;" id="fileClause" name="fileClause"/>
+                          </div>
+                        </div>
                       <div class="mb-3">
-                        <label for="formFile" class="form-label">Ajouter Clause de confidentialité signé</label>
+                        <label for="formFile" class="form-label">Ajouter Déclaration du Délégué à la Protection des Données Personnelles signé</label>
                         <div>
-                          <div id="list_file_clausule"></div>
+                          <div id="list_file_declaration"></div>
                           <input 
                             type="button" 
                             class="btn btn-primary" 
                             id="loadFileXml" 
                             value="Parcourir..." 
-                            onclick="document.getElementById('fileClausule').click();" />
-                          <input type="file" style="display:none;" id="fileClausule" name="fileClausule"/>
+                            onclick="document.getElementById('fileDeclaration').click();" />
+                          <input type="file" style="display:none;" id="fileDeclaration" name="fileDeclaration"/>
                         </div>
                       </div>
-                    <div class="mb-3">
-                      <label for="formFile" class="form-label">Ajouter Déclaration du Délégué à la Protection des Données Personnelles signé</label>
-                      <div>
-                        <div id="list_file_declaration"></div>
-                        <input 
-                          type="button" 
-                          class="btn btn-primary" 
-                          id="loadFileXml" 
-                          value="Parcourir..." 
-                          onclick="document.getElementById('fileDeclaration').click();" />
-                        <input type="file" style="display:none;" id="fileDeclaration" name="fileDeclaration"/>
-                      </div>
                     </div>
-                  </div>
-                  <br>
-                  <input id="majic" name="majic" type="hidden" value="true">
-                  <div class="buttons-on-the-right-side">
-                    <button type="submit" class="btn btn-primary">Envoyer demande</button>
+                    <br>
+                    <input id="majic" name="majic" type="hidden" value="true">
+                    <div class="buttons-on-the-right-side">
+                      <button type="submit" class="btn btn-primary">Envoyer demande</button>
+                    </div>
                   </div>
                 </div>
               </form>

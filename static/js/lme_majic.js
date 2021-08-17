@@ -158,11 +158,15 @@ function uuidv4() {
   
   
   function init_majicLmeForm(){
+    var organisationInput =  document.getElementById('0-organisation-input');
+    if (organisationInput==null){
+      hiddenElement('organisation-inputs');
+    }
     $('#0-organisation-input').prop('checked', true);
     var fileDeclaration = document.getElementById('fileDeclaration');
     var listFileDeclaration = document.getElementById('list_file_declaration');
-    var fileClausule = document.getElementById('fileClausule');
-    var listFileClausule = document.getElementById('list_file_clausule');
+    var fileClause = document.getElementById('fileClause');
+    var listFileClause = document.getElementById('list_file_clause');
     
     if (fileDeclaration !== null && fileDeclaration.value == '') {
       fileDeclaration.onchange = function () {
@@ -171,11 +175,11 @@ function uuidv4() {
         listFileDeclaration.innerHTML = files.join('<br/>');
       }
     }
-    if (fileClausule !== null && fileClausule.value == '') {
-      fileClausule.onchange = function () {
+    if (fileClause !== null && fileClause.value == '') {
+      fileClause.onchange = function () {
         var files = Array.from(this.files);
         files = files.map(file => file.name);
-        listFileClausule.innerHTML = files.join('<br/>');
+        listFileClause.innerHTML = files.join('<br/>');
       }
     }
   }
@@ -221,8 +225,8 @@ function uuidv4() {
       show_msg_error(msg_error);
       valid = false;
     }
-    if( document.getElementById("fileClausule").files.length == 0 ){
-      msg_error = '<li>Vous devez charger le document de la clausule signé.</li>';
+    if( document.getElementById("fileClause").files.length == 0 ){
+      msg_error = '<li>Vous devez charger le document de la clause signé.</li>';
       show_msg_error(msg_error);
       valid = false;
     }

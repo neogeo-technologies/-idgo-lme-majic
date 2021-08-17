@@ -2,7 +2,6 @@
 
 {% load bootstrap3 %}
 {% load static %}
-{% load idgo_lme_majic_tags %}
 
 {% block main %}
 <div class="container">
@@ -17,7 +16,7 @@
         L'accès et la délivrance des données cadastrales ont été organisés dès la création du cadastre. Outre les plans,
         dont une collection annuelle est mise gratuitement à la disposition des communes sous forme de papier ou dématérialisée,
         les collectivités peuvent se procurer les fichiers annuels actualisés des données foncières, disponibles à compter de 
-        la fin du 1er semestre. Ces fichiers, qui présentent la situation au 1er janvier, sont au nombre de cinq :
+        la fin du 1er semestre.
       </p>
       
         {% if lmes  %}
@@ -33,7 +32,7 @@
                 </div>
                 <div class="col-sm-7">
                     <h5)>TERRITOIRE DE COMPÉTENCE</h5>
-                    {% include "idgo_lme_majic/organisation/jurisdiction.html" with lme=lme only%}
+                    {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
                 </div>
               </div>
               <form method="POST" action="" id="download-form">
@@ -124,41 +123,43 @@
                   </div>
               
                   <br>
-                  <div class="col-sm-10" style="padding-left: 2em;">
-                    <div class="row">
+                  <div id="organisation-inputs">
+                    <div class="col-sm-10" style="padding-left: 2em;">
+                      <div class="row">
+                        <div class="mb-3">
+                          <label for="formFile" class="form-label">Ajouter Clause de confidentialité signé</label>
+                          <div>
+                            <div id="list_file_clause"></div>
+                            <input 
+                              type="button" 
+                              class="btn btn-primary" 
+                              id="loadFileXml" 
+                              value="Parcourir..." 
+                              onclick="document.getElementById('fileClause').click();" />
+                            <input type="file" style="display:none;" id="fileClause" name="fileClause"/>
+                          </div>
+                        </div>
                       <div class="mb-3">
-                        <label for="formFile" class="form-label">Ajouter Clausule de confidentialité signé</label>
+                        <label for="formFile" class="form-label">Ajouter Déclaration du Délégué à la Protection des Données Personnelles signé</label>
                         <div>
-                          <div id="list_file_clausule"></div>
+                          <div id="list_file_declaration"></div>
                           <input 
                             type="button" 
                             class="btn btn-primary" 
                             id="loadFileXml" 
                             value="Parcourir..." 
-                            onclick="document.getElementById('fileClausule').click();" />
-                          <input type="file" style="display:none;" id="fileClausule" name="fileClausule"/>
+                            onclick="document.getElementById('fileDeclaration').click();" />
+                          <input type="file" style="display:none;" id="fileDeclaration" name="fileDeclaration"/>
                         </div>
                       </div>
-                    <div class="mb-3">
-                      <label for="formFile" class="form-label">Ajouter Déclaration du Délégué à la Protection des Données Personnelles signé</label>
-                      <div>
-                        <div id="list_file_declaration"></div>
-                        <input 
-                          type="button" 
-                          class="btn btn-primary" 
-                          id="loadFileXml" 
-                          value="Parcourir..." 
-                          onclick="document.getElementById('fileDeclaration').click();" />
-                        <input type="file" style="display:none;" id="fileDeclaration" name="fileDeclaration"/>
-                      </div>
+                    </div>
+                    <br>
+                    <input id="lme" name="lme" type="hidden" value="true">
+                    <div class="buttons-on-the-right-side">
+                      <button type="submit" class="btn btn-primary">Envoyer demande</button>
+                    </div>
                     </div>
                   </div>
-                  <br>
-                  <input id="lme" name="lme" type="hidden" value="true">
-                  <div class="buttons-on-the-right-side">
-                    <button type="submit" class="btn btn-primary">Envoyer demande</button>
-                  </div>
-                </div>
               </form>
             </div>
           

@@ -1,5 +1,4 @@
 {% load static %}
-{% load idgo_lme_majic_tags %}
 <script src="{% static 'libs/turf/turf.min.js' %}"></script>
 <script src="{% static 'libs/leaflet/leaflet.js' %}"></script>
 <link rel="stylesheet" href="{% static 'libs/leaflet/leaflet.css' %}"/>
@@ -54,7 +53,6 @@
 
 
   function set_feature(FeatureCollection){
-    // let FeatureCollection = {{ organisations.0.jurisdiction.get_communes_as_feature_collection_geojson|safe }}
     const communesLayers = L.geoJSON(FeatureCollection, {
       style: {
         className: 'geojsonFeature',
@@ -102,27 +100,30 @@
     }else{
       let downloadForm = document.getElementById('download-form');
       if (downloadForm !== null) {
-        var maj = {{majic.organisation.pk}}
+        
+        let maj = {{majic.organisation.pk}}
         console.log(maj)
-        var lme = {{lme.organisation.pk}}
-        console.log(lme)
         if (maj != undefined){
           organisation_pk = maj
         }
-        else if(lme != undefined){
-          organisation_pk = lme
+        else{
+          let lme = {{lme.organisation.pk}}
+          console.log(lme)
+          if(lme != undefined){
+            organisation_pk = lme
+          }
         }
         
       }
     }
-    getMap(organisation_pk)
-    
+    if (organisation_pk != 0){
+      getMap(organisation_pk)
+    }
   });
 
     (function() {
       $('input:radio').change(
         function(){
-          // console.log(map)
           if(map){
             map.remove();
           }

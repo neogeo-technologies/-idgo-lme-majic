@@ -1,13 +1,9 @@
 from datetime import datetime
-import mimetypes
 
-from django.conf import settings
-from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import CreateView
 
-from idgo_admin.models import Organisation
 from idgo_admin.models import BaseMaps
 from idgo_admin.models import Profile
 from idgo_admin.models.mail import send_demande_extraction_majic_lme
@@ -15,8 +11,6 @@ from idgo_admin.models.mail import send_demande_extraction_majic_lme
 from idgo_lme_majic.models import UserMajicLme
 from idgo_lme_majic.forms import MajicForm
 from idgo_lme_majic.views.common import DECORATORS
-from idgo_lme_majic.export_api import check_majic_export_api
-from idgo_lme_majic.export_api import check_url
 from idgo_lme_majic.utils import add_years
 
 
@@ -59,10 +53,8 @@ class LmeCreate(CreateView):
             'form': self.form_class,
             'basemaps': BaseMaps.objects.all(),
             'organisations': organisations,
-            # 'statut_and_url': self.statut_and_url,
             }
 
-        # return render(self.request, self.template_name, context=context)
         return context
     
     def post(self, request):
@@ -74,11 +66,11 @@ class LmeCreate(CreateView):
                 instance.user = user
                 instance.date_expiration_lme = add_years(datetime.today(), 1)
                 instance.save()
-                fileDeclaration = request.FILES['fileDeclaration']
-                fileClausule = request.FILES['fileClausule']
+                file_declaration = request.FILES['fileDeclaration']
+                file_clause = request.FILES['fileClause']
                 files = [
-                    fileDeclaration,
-                    fileClausule,
+                    file_declaration,
+                    file_clause,
                 ]
                 url = instance.get_full_admin_url()
                 send_demande_extraction_majic_lme(instance.user, 'LME', instance.organisation, url, files)

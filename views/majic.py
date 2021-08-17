@@ -1,18 +1,12 @@
-import io
 import json
+from datetime import datetime
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from django.utils.decorators import method_decorator
-from django.views.generic.edit import CreateView
-from django.shortcuts import redirect
-from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.http import FileResponse
-from django.http import HttpResponse
-from datetime import datetime
-from datetime import date
+from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
+from django.views.generic.edit import CreateView
 
 from idgo_admin.models import Organisation
 from idgo_admin.models import BaseMaps
@@ -21,22 +15,22 @@ from idgo_admin.models.mail import send_demande_extraction_majic_lme
 
 from idgo_lme_majic.forms import MajicForm
 from idgo_lme_majic.models import UserMajicLme
-from idgo_lme_majic.views.common import DECORATORS
 from idgo_lme_majic.export_api import check_majic_export_api
 from idgo_lme_majic.export_api import check_url
 from idgo_lme_majic.export_api import download_file
 from idgo_lme_majic.utils import add_years
+from idgo_lme_majic.views.common import DECORATORS
 
 
 @method_decorator(DECORATORS, name='dispatch')
 class MajicCreate(CreateView):
-    # model = UserMajicLme
+
     form_class = MajicForm
 
     template_name = 'idgo_lme_majic/majic/majic.html'
+
     statut_and_url = {}
 
-    # def get(self, request, *args, **kwargs):
     def get_context_data(self, *args, **kwargs):
         profile = self.request.user.profile
         organisations = []
@@ -67,11 +61,8 @@ class MajicCreate(CreateView):
             'form': self.form_class,
             'basemaps': BaseMaps.objects.all(),
             'organisations': organisations,
-            'statut_and_url': self.statut_and_url,
-
             }
 
-        # return render(self.request, self.template_name, context=context)
         return context
     
     def post(self, request):
@@ -83,11 +74,11 @@ class MajicCreate(CreateView):
                 instance.user = user
                 instance.date_expiration_majic = add_years(datetime.today(), 1)
                 instance.save()
-                fileDeclaration = request.FILES['fileDeclaration']
-                fileClausule = request.FILES['fileClausule']
+                file_declaration = request.FILES['fileDeclaration']
+                file_clause = request.FILES['fileClause']
                 files = [
-                    fileDeclaration,
-                    fileClausule,
+                    file_declaration,
+                    file_clause,
                 ]
                 url = instance.get_full_admin_url()
                 send_demande_extraction_majic_lme(instance.user, 'MAJIC', instance.organisation, url, files)
@@ -115,7 +106,6 @@ def majic_check(request):
                 list_communes = list(organisation.jurisdiction.communes.values_list('code', flat=True))
                 str_list_communes = ','.join(list_communes)
                 secret = request.GET['secret']
-                # import pdb; pdb.set_trace()
                 mode = request.GET['mode']
                 if mode == '{}':
                     mode = ''
@@ -125,6 +115,7 @@ def majic_check(request):
 
 
 # @method_decorator(DECORATORS, name='dispatch')
+@login_required()
 def download_majic(request):
     response = {}
     if request.method == 'GET':
@@ -142,6 +133,7 @@ def download_majic(request):
 
 
 # @method_decorator(DECORATORS, name='dispatch')
+@login_required()
 def geojson(request):
     
     geojson = {}
@@ -153,5 +145,4 @@ def geojson(request):
             except Organisation.DoesNotExist as e:
                 obj_organisation = []
             geojson = json.loads(obj_organisation.jurisdiction.get_communes_as_feature_collection_geojson())
-            # import pdb; pdb.set_trace()
     return JsonResponse(geojson)
