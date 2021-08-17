@@ -1,3 +1,4 @@
+<!-- extends "idgo_admin:idgo_admin/base.html" -->
 {% extends "idgo_lme_majic/base.html" %}
 
 {% load bootstrap3 %}
@@ -38,7 +39,7 @@
               <form method="POST" action="" id="download-form">
                 {% csrf_token %}
                 <input 
-                  id="organisation" 
+                  id="0-organisation-input"
                   name="organisation" 
                   type="hidden" 
                   value="{{lme.organisation.pk}}">
@@ -96,7 +97,7 @@
                     <div class="list-group" id="id_list_groups">
                       {% for organisation in organisations %}
                         {% if organisation.jurisdiction  %}
-                        <fieldset >
+                        <fieldset id="fieldset-organisation">
                           <div>
                             <input 
                               class="form-check-input" 
@@ -139,25 +140,25 @@
                             <input type="file" style="display:none;" id="fileClause" name="fileClause"/>
                           </div>
                         </div>
-                      <div class="mb-3">
-                        <label for="formFile" class="form-label">Ajouter Déclaration du Délégué à la Protection des Données Personnelles signé</label>
-                        <div>
-                          <div id="list_file_declaration"></div>
-                          <input 
-                            type="button" 
-                            class="btn btn-primary" 
-                            id="loadFileXml" 
-                            value="Parcourir..." 
-                            onclick="document.getElementById('fileDeclaration').click();" />
-                          <input type="file" style="display:none;" id="fileDeclaration" name="fileDeclaration"/>
+                        <div class="mb-3">
+                          <label for="formFile" class="form-label">Ajouter Déclaration du Délégué à la Protection des Données Personnelles signé</label>
+                          <div>
+                            <div id="list_file_declaration"></div>
+                            <input 
+                              type="button" 
+                              class="btn btn-primary" 
+                              id="loadFileXml" 
+                              value="Parcourir..." 
+                              onclick="document.getElementById('fileDeclaration').click();" />
+                            <input type="file" style="display:none;" id="fileDeclaration" name="fileDeclaration"/>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <br>
-                    <input id="lme" name="lme" type="hidden" value="true">
-                    <div class="buttons-on-the-right-side">
-                      <button type="submit" class="btn btn-primary">Envoyer demande</button>
-                    </div>
+                      <br>
+                      <input id="lme" name="lme" type="hidden" value="true">
+                      <div id="button-submit" class="buttons-on-the-right-side">
+                        <button type="submit" class="btn btn-primary">Envoyer demande</button>
+                      </div>
                     </div>
                   </div>
               </form>

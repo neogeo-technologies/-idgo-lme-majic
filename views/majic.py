@@ -1,3 +1,4 @@
+import io
 import json
 from datetime import datetime
 
@@ -74,6 +75,7 @@ class MajicCreate(CreateView):
                 instance.user = user
                 instance.date_expiration_majic = add_years(datetime.today(), 1)
                 instance.save()
+                import pdb; pdb.set_trace()
                 file_declaration = request.FILES['fileDeclaration']
                 file_clause = request.FILES['fileClause']
                 files = [

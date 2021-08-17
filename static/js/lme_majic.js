@@ -38,13 +38,13 @@ function uuidv4() {
   
   
   function check_extract(statut="", url=""){
-    var organisation = document.getElementById('organisation');
+    var organisation = document.getElementById('0-organisation-input');
     var secret = document.getElementById('secret');
     var request_id = document.getElementById('request_id');
     var mode = document.getElementById('mode');
-    console.log(mode.value)
     let type = 'lme';
-    if (mode)
+
+    if (mode.value)
         type = 'majic';
     params= {
       'organisation': organisation.value,
@@ -64,6 +64,7 @@ function uuidv4() {
           let response_html = '';
           // IF RESPONSE STATUT OK
           if (response.data.statut == 'OK'){
+            console.log(type)
             setCookie('extraction-'+ type, secret.value + response.data.url, 1);
             response_html = response_ok(response.data.url, secret.value, request_id.value)
             }

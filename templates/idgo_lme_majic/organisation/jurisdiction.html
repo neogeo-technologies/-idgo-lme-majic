@@ -42,15 +42,23 @@
       })
       .then(function (response) {
         set_feature(response.data)
+        if (hasForm('majic-lme-form')){
+          changeDisableElement("id_list_groups", false)
+          changeDisableElement("organisation-inputs", false)
+        }
       })
       .catch(function (response) {
           //handle error
           console.log('erreur', response);
           msg_error = `<li>Une erreur s'est produit lors de la recuperation de la carte.</li>`;
           show_msg_error(msg_error)
+          if (hasForm('majic-lme-form')){
+            changeDisableElement("id_list_groups", false)
+            changeDisableElement("organisation-inputs", false)
+          }
       });
+    
   }
-
 
   function set_feature(FeatureCollection){
     const communesLayers = L.geoJSON(FeatureCollection, {
@@ -92,41 +100,46 @@
       .fitBounds(communesLayers.getBounds())
   }
 
+  function changeDisableElement(name, status){
+    var nodes = document.getElementById(name).getElementsByTagName('*');
+    for(var i = 0; i < nodes.length; i++){
+        nodes[i].disabled = status;
+    }
+  }
+
+  function hasForm(fname){
+    let hasForm = document.getElementById(fname);
+    if(hasForm == undefined){
+      return false;
+    }
+    return true;
+  }
   $(document).ready(function() {
+    if (hasForm('majic-lme-form')){
+      changeDisableElement("id_list_groups", true)
+      changeDisableElement("organisation-inputs", true)
+    }
+    
     let organisation_pk = 0;
-    let organisation = document.getElementById('0-organisation-input');
+    organisation = document.getElementById('0-organisation-input');
     if(organisation != null){
       organisation_pk = organisation.value
-    }else{
-      let downloadForm = document.getElementById('download-form');
-      if (downloadForm !== null) {
-        
-        let maj = {{majic.organisation.pk}}
-        console.log(maj)
-        if (maj != undefined){
-          organisation_pk = maj
-        }
-        else{
-          let lme = {{lme.organisation.pk}}
-          console.log(lme)
-          if(lme != undefined){
-            organisation_pk = lme
-          }
-        }
-        
-      }
     }
     if (organisation_pk != 0){
       getMap(organisation_pk)
     }
+    // if (hasForm('majic-lme-form')){
+    //   changeDisableElement("id_list_groups", false)
+    //   changeDisableElement("organisation-inputs", false)
+    // }
   });
 
     (function() {
       $('input:radio').change(
         function(){
-          if(map){
-            map.remove();
-          }
+          changeDisableElement("id_list_groups", true)
+          changeDisableElement("organisation-inputs", true)
+          map.remove()
           if ($(this).is(':checked')) {
             organisation_pk = $(this).val()
             getMap(organisation_pk)

@@ -1,3 +1,4 @@
+<!-- extends "idgo_admin:idgo_admin/base.html" -->
 {% extends "idgo_lme_majic/base.html" %}
 
 {% load bootstrap3 %}
@@ -31,7 +32,7 @@
                   {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
               </div>
             </div>
-            <form method="POST" action="" enctype="multipart/form-data" id="download-form">
+            <form method="POST" action="" id="download-form">
               {% csrf_token %}
               <div class="row">
                 <div class="col-sm-5">
@@ -75,9 +76,9 @@
                 </div>
               </div>
               <input 
-                id="organisation" 
                 name="organisation" 
-                type="hidden" 
+                type="hidden"
+                id="0-organisation-input" 
                 value="{{majic.organisation.pk}}">
               <input id="secret" name="secret" type="hidden" value="">
               <input id="request_id" name="request_id" type="hidden" value="">
@@ -118,7 +119,7 @@
               </div>
             <br>
             <div>
-              <form method="POST" action="" id="majic-lme-form">
+              <form method="POST" action="" enctype="multipart/form-data" id="majic-lme-form">
                 {% csrf_token %}
                 <div class="row">
                   <div class="col-sm-5">
@@ -131,7 +132,7 @@
                     <div class="list-group" id="id_list_groups">
                       {% for organisation in organisations %}
                         {% if organisation.jurisdiction  %}
-                        <fieldset >
+                        <fieldset id="fieldset-organisation">
                           <div>
                             <input 
                               class="form-check-input" 
@@ -174,27 +175,27 @@
                             <input type="file" style="display:none;" id="fileClause" name="fileClause"/>
                           </div>
                         </div>
-                      <div class="mb-3">
-                        <label for="formFile" class="form-label">Ajouter Déclaration du Délégué à la Protection des Données Personnelles signé</label>
-                        <div>
-                          <div id="list_file_declaration"></div>
-                          <input 
-                            type="button" 
-                            class="btn btn-primary" 
-                            id="loadFileXml" 
-                            value="Parcourir..." 
-                            onclick="document.getElementById('fileDeclaration').click();" />
-                          <input type="file" style="display:none;" id="fileDeclaration" name="fileDeclaration"/>
+                        <div class="mb-3">
+                          <label for="formFile" class="form-label">Ajouter Déclaration du Délégué à la Protection des Données Personnelles signé</label>
+                          <div>
+                            <div id="list_file_declaration"></div>
+                            <input 
+                              type="button" 
+                              class="btn btn-primary" 
+                              id="loadFileXml" 
+                              value="Parcourir..." 
+                              onclick="document.getElementById('fileDeclaration').click();" />
+                            <input type="file" style="display:none;" id="fileDeclaration" name="fileDeclaration"/>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <br>
-                    <input id="majic" name="majic" type="hidden" value="true">
-                    <div class="buttons-on-the-right-side">
-                      <button type="submit" class="btn btn-primary">Envoyer demande</button>
+                      <br>
+                      <input id="majic" name="majic" type="hidden" value="true">
+                      <div id="button-submit" class="buttons-on-the-right-side">
+                        <button type="submit" class="btn btn-primary">Envoyer demande</button>
+                      </div>
                     </div>
                   </div>
-                </div>
               </form>
             </div>
           
