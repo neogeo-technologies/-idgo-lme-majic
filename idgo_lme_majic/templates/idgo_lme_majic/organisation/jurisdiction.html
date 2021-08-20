@@ -119,9 +119,13 @@
       changeDisableElement("id_list_groups", true)
       changeDisableElement("organisation-inputs", true)
     }
-    
+    var inputs = $("#fieldset-organisation").find($("input") );
+    let pkOrganisationInput = 0;
+    if (inputs.length){
+      pkOrganisationInput = inputs[0].id;
+    }
     let organisation_pk = 0;
-    organisation = document.getElementById('0-organisation-input');
+    organisation = document.getElementById(pkOrganisationInput);
     if(organisation != null){
       organisation_pk = organisation.value
     }

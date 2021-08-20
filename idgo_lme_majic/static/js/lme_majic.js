@@ -64,7 +64,6 @@ function uuidv4() {
           let response_html = '';
           // IF RESPONSE STATUT OK
           if (response.data.statut == 'OK'){
-            console.log(type)
             setCookie('extraction-'+ type, secret.value + response.data.url, 1);
             response_html = response_ok(response.data.url, secret.value, request_id.value)
             }
@@ -159,11 +158,16 @@ function uuidv4() {
   
   
   function init_majicLmeForm(){
-    var organisationInput =  document.getElementById('0-organisation-input');
+    var inputs = $("#fieldset-organisation").find($("input") );
+    let pkOrganisationInput = 0;
+    if (inputs.length){
+      pkOrganisationInput = inputs[0].id;
+    }
+    var organisationInput =  document.getElementById(pkOrganisationInput);
     if (organisationInput==null){
       hiddenElement('organisation-inputs');
     }
-    $('#0-organisation-input').prop('checked', true);
+    document.getElementById(pkOrganisationInput).checked = true;
     var fileDeclaration = document.getElementById('fileDeclaration');
     var listFileDeclaration = document.getElementById('list_file_declaration');
     var fileClause = document.getElementById('fileClause');

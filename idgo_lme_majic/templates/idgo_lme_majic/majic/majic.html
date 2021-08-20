@@ -130,25 +130,25 @@
                     {%endif %}
                     {{profile.jurisdiction}}
                     <div class="list-group" id="id_list_groups">
-                      {% for organisation in organisations %}
-                        {% if organisation.jurisdiction  %}
-                        <fieldset id="fieldset-organisation">
-                          <div>
-                            <input 
-                              class="form-check-input" 
-                              type="radio" 
-                              name="organisation" 
-                              id="{{ forloop.counter0 }}-organisation-input" 
-                              value="{{ organisation.pk }}">
-                            <label class="form-check-label" for="organisation">
-                              {{ organisation.legal_name }} - {{ organisation.jurisdiction }}
-                            </label>
-                          </div>
-                        </fieldset>
-                        {%else%}
-                        <b>{{ organisation.legal_name }}</b> - Le territoire de compétence n'est pas défini.
-                        {% endif %}
-                      {% endfor %}
+                      <fieldset id="fieldset-organisation">
+                        {% for organisation in organisations %}
+                          {% if organisation.jurisdiction  %}
+                            <div>
+                              <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                name="organisation" 
+                                id="{{ forloop.counter0 }}-organisation-input" 
+                                value="{{ organisation.pk }}">
+                              <label class="form-check-label" for="organisation">
+                                {{ organisation.legal_name }} - {{ organisation.jurisdiction }}
+                              </label>
+                            </div>
+                          {%else%}
+                          <b>{{ organisation.legal_name }}</b> - Le territoire de compétence n'est pas défini.
+                          {% endif %}
+                        {% endfor %}
+                      </fieldset>
                     </div>
                   </div>
                   <div class="col-sm-7">
