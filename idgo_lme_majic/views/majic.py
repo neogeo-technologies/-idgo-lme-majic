@@ -12,7 +12,6 @@ from django.views.generic.edit import CreateView
 from idgo_admin.models import Organisation
 from idgo_admin.models import BaseMaps
 from idgo_admin.models import Profile
-from idgo_admin.models.mail import send_demande_extraction_majic_lme
 
 from idgo_lme_majic.forms import MajicForm
 from idgo_lme_majic.models import UserMajicLme
@@ -20,6 +19,7 @@ from idgo_lme_majic.export_api import check_majic_export_api
 from idgo_lme_majic.export_api import check_url
 from idgo_lme_majic.export_api import download_file
 from idgo_lme_majic.utils import add_years
+from idgo_lme_majic.utils import send_demande_extraction_majic_lme
 from idgo_lme_majic.views.common import DECORATORS
 
 

@@ -16,11 +16,8 @@ router = DefaultRouter()
 
 urlpatterns = [
    url('^majic/?$', MajicCreate.as_view(), name='majic'),
+
    url('^lme/?$', LmeCreate.as_view(), name='lme'),
-
-   # url('^majic_check/<int:request_id>/', majic_check, name='majic_check'),
-
-   # url(r'^majic_check/(?P<request_id>[0-9]+)/$', majic_check, name='majic_check'),
 
    url(r'^majic_check/?$', majic_check, name='majic_check'),
 
