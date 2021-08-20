@@ -39,7 +39,7 @@ setup(
     description='IDGO LME MAJIC',
     author='Neogeo Technologies',
     author_email='contact@neogeo.fr',
-    url='https://git.neogeo.fr/idgo/idgo-lme-majic',
+    url='https://git.neogeo.fr/idgo/apps/idgo-lme-majic',
     license='Apache License, Version 2.0',
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
