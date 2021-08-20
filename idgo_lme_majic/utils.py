@@ -4,6 +4,7 @@ from datetime import date
 from idgo_admin.models import Mail
 from idgo_admin.models.mail import sender
 from idgo_admin.models.mail import get_admins_mails
+from django.apps import apps
 
 def add_years(d, years):
     """Return a date that's `years` years after the date (or datetime)
@@ -16,8 +17,6 @@ def add_years(d, years):
         return d.replace(year = d.year + years)
     except ValueError:
         return date(d.year + years, 3, 1)
-
-
 
 
 # Pour une demande d'une extraction MAJIC/LME
