@@ -29,8 +29,8 @@ def send_demande_extraction_majic_lme(user, type_ext, organisation, url, attach_
         in JurisdictionCommune.objects.filter(jurisdiction=organisation.jurisdiction)]
     return sender(
         'demande_extraction_majic_lme',
-        # to=get_admins_mails(),
-        to=['lalmada@neogeo.fr',],
+        to=get_admins_mails(),
+        # to=['lalmada@neogeo.fr',],
         attach_files= attach_files,
         email=user.email,
         full_name=user.get_full_name(),
