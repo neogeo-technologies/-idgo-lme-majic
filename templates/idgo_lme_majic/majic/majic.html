@@ -1,0 +1,224 @@
+<!-- extends "idgo_admin:idgo_admin/base.html" -->
+{% extends "idgo_lme_majic/base.html" %}
+
+{% load bootstrap3 %}
+{% load static %}
+
+{% block main %}
+<div class="container">
+  <div class="row">
+    <div class="alert alert-danger" style="display: none;" id="msg-validation-error"></div>
+      <div class="col-md-offset-1 col-md-10">
+        <h1>Espace MAJIC</h1>
+        <p>
+          L'espace MAJIC III (Mise A Jour des Informations Cadastrales) comportent des renseignements relatifs aux propriétés bâties et non bâties.
+          <br>
+          L'accès et la délivrance des données cadastrales ont été organisés dès la création du cadastre.
+        </p>
+        
+        {% if majics  %}
+        <hr>
+          <h4><b>FAIRE UNE EXTRACTION</b></h4>
+          {% for majic in majics %}
+            {%if majic.majic%}
+            <div class="row">
+              <div class="col-sm-5">
+                <h5>Accès valide jusqu'au 
+                  <b>{{majic.date_expiration_majic}}</b>
+                </h5>
+              </div>
+              <div class="col-sm-7">
+                  <h5)>TERRITOIRE DE COMPÉTENCE</h5>
+                  {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
+              </div>
+            </div>
+            <form method="POST" action="" id="download-form">
+              {% csrf_token %}
+              <div class="row">
+                <div class="col-sm-5">
+                  <h5)>Mode d'extraction :</h5>
+                  <fieldset id="group1">
+                    <div>
+                      <input 
+                        class="form-check-input" 
+                        type="radio" 
+                        name="organisation" 
+                        id="mode" 
+                        value="split"
+                        checked>
+                      <label class="form-check-label" for="organisation">
+                        1 fichier par communes
+                      </label>
+                    </div>
+                    <div>
+                      <input 
+                        class="form-check-input" 
+                        type="radio" 
+                        name="organisation" 
+                        id="mode" 
+                        value="group">
+                      <label class="form-check-label" for="organisation">
+                        1 fichier pour toutes les communes
+                      </label>
+                    </div>
+                    <div>
+                      <input 
+                        class="form-check-input" 
+                        type="radio" 
+                        name="organisation" 
+                        id="mode" 
+                        value="both">
+                      <label class="form-check-label" for="organisation">
+                        1 fichier par commune et 1 fichier groupé
+                      </label>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+              <input 
+                name="organisation" 
+                type="hidden"
+                id="0-organisation-input" 
+                value="{{majic.organisation.pk}}">
+              <input id="secret" name="secret" type="hidden" value="">
+              <input id="request_id" name="request_id" type="hidden" value="">
+              <input id="download_file" name="download_file" type="hidden" value="true">
+              <div class="buttons-on-the-right-side">
+                <button id="btn-download-form" type="submit" class="btn btn-primary">Demande de téléchargement</button>
+              </div>
+            </form>
+            <div id='statut-id-{{ forloop.counter0 }}'></div>
+            {%else%}
+              La demande d'extraction est en validation pour les administrateurs.
+            {%endif%}
+          {% endfor %}
+        {% endif %}
+      
+        <br>
+        {% if majics|length == 0%}
+          {% if organisations  %}
+            <div style="padding-bottom: 5em;">
+              <hr>
+              <div>
+                <h4><b>DEMANDER EXTRACTION</b></h4>
+                <p>
+                  Pour demander une extraction MAJIC (Mise A Jour des Informations Cadastrales), il faudrait télécharger les documents suivants,
+                  <br> les signer et les ajouter dans le formulaire ci-dessus.
+                </p>
+                <h5><b>TÉLÉCHARGER DOCUMENTS À SIGNER</b></h5>
+                <div>
+                  <a href="{% static "Declaration_du_Delegue_a_la_Protection_des_Donnees_Personnelles.pdf" %}" target="_blank"
+                    class="card-link">Clause de confidentialité
+                  </a>
+                </div>
+                <div>
+                  <a href="{% static "Clause_de_confidentialite.pdf" %}" target="_blank"
+                    class="card-link">Déclaration du Délégué à la Protection des Données Personnelles
+                  </a>
+                </div>
+              </div>
+            <br>
+            <div>
+              <form method="POST" action="" enctype="multipart/form-data" id="majic-lme-form">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-sm-5">
+                    {%if organisations|length == 1%}
+                      <h5>ORGANISATION</h5>
+                    {%else%}
+                      <h5>ORGANISATIONS</h5>
+                    {%endif %}
+                    {{profile.jurisdiction}}
+                    <div class="list-group" id="id_list_groups">
+                      {% for organisation in organisations %}
+                        {% if organisation.jurisdiction  %}
+                        <fieldset id="fieldset-organisation">
+                          <div>
+                            <input 
+                              class="form-check-input" 
+                              type="radio" 
+                              name="organisation" 
+                              id="{{ forloop.counter0 }}-organisation-input" 
+                              value="{{ organisation.pk }}">
+                            <label class="form-check-label" for="organisation">
+                              {{ organisation.legal_name }} - {{ organisation.jurisdiction }}
+                            </label>
+                          </div>
+                        </fieldset>
+                        {%else%}
+                        <b>{{ organisation.legal_name }}</b> - Le territoire de compétence n'est pas défini.
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="col-sm-7">
+                    <h5)>TERRITOIRE DE COMPÉTENCE</h5>
+                    {% if organisations  %}
+                      {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
+                    {% endif %}
+                  </div>
+              
+                  <br>
+                  <div id="organisation-inputs">
+                    <div class="col-sm-10" style="padding-left: 2em;">
+                      <div class="row">
+                        <div class="mb-3">
+                          <label for="formFile" class="form-label">Ajouter Clause de confidentialité signé</label>
+                          <div>
+                            <div id="list_file_clause"></div>
+                            <input 
+                              type="button" 
+                              class="btn btn-primary" 
+                              id="loadFileXml" 
+                              value="Parcourir..." 
+                              onclick="document.getElementById('fileClause').click();" />
+                            <input type="file" style="display:none;" id="fileClause" name="fileClause"/>
+                          </div>
+                        </div>
+                        <div class="mb-3">
+                          <label for="formFile" class="form-label">Ajouter Déclaration du Délégué à la Protection des Données Personnelles signé</label>
+                          <div>
+                            <div id="list_file_declaration"></div>
+                            <input 
+                              type="button" 
+                              class="btn btn-primary" 
+                              id="loadFileXml" 
+                              value="Parcourir..." 
+                              onclick="document.getElementById('fileDeclaration').click();" />
+                            <input type="file" style="display:none;" id="fileDeclaration" name="fileDeclaration"/>
+                          </div>
+                        </div>
+                      </div>
+                      <br>
+                      <input id="majic" name="majic" type="hidden" value="true">
+                      <div id="button-submit" class="buttons-on-the-right-side">
+                        <button type="submit" class="btn btn-primary">Envoyer demande</button>
+                      </div>
+                    </div>
+                  </div>
+              </form>
+            </div>
+          
+            </div>
+          {% endif %}
+        {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+
+  function check_cookies(){
+      var cookieExtraction = checkCookie('extraction-majic');
+      if (cookieExtraction != false) {
+        let secret = cookieExtraction.substring(0, 6)
+        let request_id = cookieExtraction.split("request_id=")[1];
+        response_html = response_ok(cookieExtraction.substring(6), secret, request_id)
+        set_response(response_html)
+      }
+    }
+  </script>
+
+{% endblock main %}
+
+<!-- TODO: VALIDATION FICHIER PDF ET TAILLE (COMBIEN?)-->
