@@ -67,6 +67,7 @@ function uuidv4() {
           // IF RESPONSE STATUT PENDING
           if (response.data.statut == 'pending'){
             response_html = `<h5> Statut de la demande : En cours</h5>
+                            <small>Merci de patienter quelques instants ...</small>
                             <div class="loader"></div>`
             setTimeout(function(){ check_extract('pending', response.data.url); }, 30000);
           }
