@@ -11,7 +11,7 @@ class UserMajicLmeFilter(SimpleListFilter):
     parameter_name = 'user'
 
     def lookups(self, request, model_admin):
-        return UserMajicLme.objects.all().values_list('user', 'user__username')
+        return UserMajicLme.objects.all().values_list('user', 'user__username').distinct()
 
     def queryset(self, request, queryset):
         # Si filtre il y'a
