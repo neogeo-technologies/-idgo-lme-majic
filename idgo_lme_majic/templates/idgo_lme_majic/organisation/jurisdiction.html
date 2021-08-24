@@ -125,7 +125,12 @@
       pkOrganisationInput = inputs[0].id;
     }
     let organisation_pk = 0;
-    organisation = document.getElementById(pkOrganisationInput);
+    if (inputs.length == 0){
+      organisation = document.getElementById('0-organisation-input');
+    }
+    else{
+      organisation = document.getElementById(pkOrganisationInput);
+    }
     if(organisation != null){
       organisation_pk = organisation.value
     }
