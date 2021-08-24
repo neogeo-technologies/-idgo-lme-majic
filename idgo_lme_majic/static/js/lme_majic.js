@@ -41,16 +41,13 @@ function uuidv4() {
     var organisation = document.getElementById('0-organisation-input');
     var secret = document.getElementById('secret');
     var request_id = document.getElementById('request_id');
-    var mode = document.getElementById('mode');
-    let type = 'lme';
+    var type = document.getElementById('title').getAttribute('value');
 
-    if (mode.value)
-        type = 'majic';
     params= {
       'organisation': organisation.value,
       'secret': secret.value,
       'request_id': request_id.value,
-      'mode': mode.value,
+      'mode': mode,
       'statut': statut,
       'url': url,
     }
@@ -70,6 +67,7 @@ function uuidv4() {
           // IF RESPONSE STATUT PENDING
           if (response.data.statut == 'pending'){
             response_html = `<h5> Statut de la demande : En cours</h5>
+                            <small>Merci de patienter quelques instants ...</small>
                             <div class="loader"></div>`
             setTimeout(function(){ check_extract('pending', response.data.url); }, 30000);
           }
@@ -92,10 +90,9 @@ function uuidv4() {
       });
   }
   function downloadFile(){
-    var mode = document.getElementById('mode');
-    let type = 'lme';
-    if (mode.value)
-        type = 'majic';
+    // activer loader
+    $("#loading").removeClass('hide');
+    var type = document.getElementById('title').getAttribute('value');
     var request_id = document.getElementById('request_id');
     params= {
       'request_id': request_id.value,
@@ -109,6 +106,7 @@ function uuidv4() {
         responseType: "blob",
         })
         .then(function (response) {
+          $("#loading").addClass('hide');
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
           link.href = url;
@@ -117,19 +115,25 @@ function uuidv4() {
           link.click();
         })
         .catch(function (response) {
-            //handle error
-            console.log('erreur', response);
+          $("#loading").addClass('hide');
+          //handle error
+          console.log('erreur', response);
         });
   }
 
 
   function response_ok(url, secret, request_id){
-    return `<h5> Télécharger l'extraction : 
-            <a href="#" onclick="downloadFile();">
-              Fichier zip
-            </a>
-          </h5>
-          Code secret: ${secret}`
+    return `<div id="loading" class="hide">
+              <div id="loading-content">
+                Le télécharment du fichier est en cours...
+              </div>
+            </div>
+            <h5> Télécharger l'extraction : 
+              <a href="#" onclick="downloadFile();">
+                Fichier zip
+              </a>
+            </h5>
+            Code secret: ${secret}`
   }
   
   function set_response(response_html){
@@ -138,25 +142,7 @@ function uuidv4() {
     `);
     hiddenElement("download-form")
   }
-  
-  $("input:checkbox").on('click', function() {
-    // in the handler, 'this' refers to the box clicked on
-    var $box = $(this);
-    if ($box.is(":checked")) {
-      // the name of the box is retrieved using the .attr() method
-      // as it is assumed and expected to be immutable
-      var group = "input:checkbox[name='" + $box.attr("name") + "']";
-      // the checked state of the group/box on the other hand will change
-      // and the current value is retrieved using .prop() method
-      $(group).prop("checked", false);
-      $box.prop("checked", true);
-    } else {
-      $box.prop("checked", false);
-    }
-  });
 
-  
-  
   function init_majicLmeForm(){
     var inputs = $("#fieldset-organisation").find($("input") );
     let pkOrganisationInput = 0;
@@ -188,7 +174,11 @@ function uuidv4() {
       }
     }
   }
-  
+  function handleChange(src) {
+    mode = src.value;
+  }
+  var mode = '';
+
   $(document).ready(function() {
     // majic-lme-form
     const majicLmeForm = document.getElementById('majic-lme-form');

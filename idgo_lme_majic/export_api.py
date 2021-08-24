@@ -17,7 +17,6 @@ def check_majic_export_api (communes, secret, request_id, mode={}) :
     """
     
     statut_and_url = {}
-    logging.error(mode)
 
     if mode:
         url = settings.MAJIC_API + 'export_majic'
@@ -34,7 +33,8 @@ def check_majic_export_api (communes, secret, request_id, mode={}) :
     res = requests.post(url,
                         data= payload,
                         )
-    
+
+    # REMOVE IN PROD
     logging.error(res.text)
     logging.error(url)
 
@@ -65,7 +65,6 @@ def check_url(url, request_id):
     res = requests.get(url, params= params)
 
     # REMOVE IN PROD
-    import logging
     logging.error(res.text)
     logging.error(res.url)
 
@@ -84,17 +83,14 @@ def check_url(url, request_id):
     return json_res
 
 def download_file(request_id, type_ext):
-    import logging
-    logging.error(type_ext)
     url = settings.MAJIC_API + 'download_' + type_ext
 
     params = {'request_id': request_id}
     res = requests.get(url, params= params)
+
     # REMOVE IN PROD
-    
     logging.error(res)
     logging.error(params)
-    logging.error(res.status_code)
     logging.error(url)
 
     return res
