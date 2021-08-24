@@ -8,7 +8,7 @@
 <div class="container">
   <div class="row">
     <div class="alert alert-danger" style="display: none;" id="msg-validation-error"></div>
-      <div class="col-md-offset-1 col-md-10">
+      <div class="col-md-offset-1 col-md-10" id="title" value='majic'>
         <h1>Espace MAJIC</h1>
         <p>
           L'espace MAJIC III (Mise A Jour des Informations Cadastrales) comportent des renseignements relatifs aux propriétés bâties et non bâties.
@@ -21,75 +21,78 @@
           <h4><b>FAIRE UNE EXTRACTION</b></h4>
           {% for majic in majics %}
             {%if majic.majic%}
-            <div class="row">
-              <div class="col-sm-5">
-                <h5>Accès valide jusqu'au 
-                  <b>{{majic.date_expiration_majic}}</b>
-                </h5>
-              </div>
-              <div class="col-sm-7">
-                  <h5)>TERRITOIRE DE COMPÉTENCE</h5>
-                  {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
-              </div>
-            </div>
-            <form method="POST" action="" id="download-form">
-              {% csrf_token %}
               <div class="row">
                 <div class="col-sm-5">
-                  <h5)>Mode d'extraction :</h5>
-                  <fieldset id="group1">
-                    <div>
-                      <input 
-                        class="form-check-input" 
-                        type="radio" 
-                        name="organisation" 
-                        id="mode" 
-                        value="split"
-                        checked>
-                      <label class="form-check-label" for="organisation">
-                        1 fichier par communes
-                      </label>
-                    </div>
-                    <div>
-                      <input 
-                        class="form-check-input" 
-                        type="radio" 
-                        name="organisation" 
-                        id="mode" 
-                        value="group">
-                      <label class="form-check-label" for="organisation">
-                        1 fichier pour toutes les communes
-                      </label>
-                    </div>
-                    <div>
-                      <input 
-                        class="form-check-input" 
-                        type="radio" 
-                        name="organisation" 
-                        id="mode" 
-                        value="both">
-                      <label class="form-check-label" for="organisation">
-                        1 fichier par commune et 1 fichier groupé
-                      </label>
-                    </div>
-                  </fieldset>
+                  <h5>Accès valide jusqu'au 
+                    <b>{{majic.date_expiration_majic}}</b>
+                  </h5>
+                </div>
+                <div class="col-sm-7">
+                    <h5)>TERRITOIRE DE COMPÉTENCE</h5>
+                    {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
                 </div>
               </div>
-              <input 
-                name="organisation" 
-                type="hidden"
-                id="0-organisation-input" 
-                value="{{majic.organisation.pk}}">
-              <input id="secret" name="secret" type="hidden" value="">
-              <input id="request_id" name="request_id" type="hidden" value="">
-              <input id="download_file" name="download_file" type="hidden" value="true">
-              <div class="buttons-on-the-right-side">
-                <button id="btn-download-form" type="submit" class="btn btn-primary">Demande de téléchargement</button>
-              </div>
-            </form>
-            <div id='statut-id-{{ forloop.counter0 }}'></div>
+              <form method="POST" action="" id="download-form">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-sm-5">
+                    <h5)>Mode d'extraction :</h5>
+                    <fieldset id="group1">
+                      <div>
+                        <input
+                          onchange="handleChange(this);"
+                          class="form-check-input" 
+                          type="radio" 
+                          name="organisation" 
+                          id="mode" 
+                          value="split"
+                          checked>
+                        <label class="form-check-label" for="organisation">
+                          1 fichier par communes
+                        </label>
+                      </div>
+                      <div>
+                        <input
+                          onchange="handleChange(this);"
+                          class="form-check-input" 
+                          type="radio" 
+                          name="organisation" 
+                          id="mode" 
+                          value="group">
+                        <label class="form-check-label" for="organisation">
+                          1 fichier pour toutes les communes
+                        </label>
+                      </div>
+                      <div>
+                        <input
+                          onchange="handleChange(this);"
+                          class="form-check-input" 
+                          type="radio" 
+                          name="organisation" 
+                          id="mode" 
+                          value="both">
+                        <label class="form-check-label" for="organisation">
+                          1 fichier par commune et 1 fichier groupé
+                        </label>
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+                <input 
+                  name="organisation" 
+                  type="hidden"
+                  id="0-organisation-input" 
+                  value="{{majic.organisation.pk}}">
+                <input id="secret" name="secret" type="hidden" value="">
+                <input id="request_id" name="request_id" type="hidden" value="">
+                <input id="download_file" name="download_file" type="hidden" value="true">
+                <div class="buttons-on-the-right-side">
+                  <button id="btn-download-form" type="submit" class="btn btn-primary">Demande de téléchargement</button>
+                </div>
+              </form>
+              <div id='statut-id-{{ forloop.counter0 }}'></div>
             {%else%}
-              La demande d'extraction est en validation pour les administrateurs.
+              La demandeee d'extraction est en validation pour les administrateurs. {{majic.majic}}
             {%endif%}
           {% endfor %}
         {% endif %}
