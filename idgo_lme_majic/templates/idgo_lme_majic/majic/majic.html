@@ -137,14 +137,14 @@
                         {% for organisation in organisations %}
                           {% if organisation.jurisdiction  %}
                             <div>
-                              <input 
-                                class="form-check-input" 
-                                type="radio" 
-                                name="organisation" 
-                                id="{{ forloop.counter0 }}-organisation-input" 
-                                value="{{ organisation.pk }}">
                               <label class="form-check-label" for="organisation">
-                                {{ organisation.legal_name }} - {{ organisation.jurisdiction }}
+                                <input 
+                                  class="form-check-input" 
+                                  type="radio" 
+                                  name="organisation" 
+                                  id="{{ forloop.counter0 }}-organisation-input" 
+                                  value="{{ organisation.pk }}"/>
+                                  {{ organisation.legal_name }} - {{ organisation.jurisdiction }}
                               </label>
                             </div>
                           {%else%}
