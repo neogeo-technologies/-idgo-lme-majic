@@ -59,7 +59,6 @@
       });
     
   }
-
   function set_feature(FeatureCollection){
     const communesLayers = L.geoJSON(FeatureCollection, {
       style: {
@@ -89,10 +88,14 @@
         });
       }
     });
+
+    // Layers [0] -> BaseMaps
+    // TODO : find a better solution
+    while (layers.length > 1 ){
+      layers.pop()
+    }
     layers.push(communesLayers);
-    
-    // map.addLayer(layers).fitBounds(communesLayers.getBounds());
-    
+
     map = L
       .map('map', {
         'layers': layers
@@ -148,14 +151,12 @@
         function(){
           changeDisableElement("id_list_groups", true)
           changeDisableElement("organisation-inputs", true)
-          map.remove()
+          map.remove();
           if ($(this).is(':checked')) {
             organisation_pk = $(this).val()
             getMap(organisation_pk)
           }
         });
       })();
-
-
 
 </script>
