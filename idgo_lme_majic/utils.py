@@ -79,13 +79,14 @@ def send_demande_extraction_majic_lme(user, type_ext, organisation, url, attach_
     communes = [
         instance.commune for instance
         in JurisdictionCommune.objects.filter(jurisdiction=organisation.jurisdiction)]
+    # import pdb; pdb.set_trace()
     return sender(
         'demande_extraction_majic_lme',
         to=get_admins_mails(),
         # to=['lalmada@neogeo.fr',],
         attach_files= attach_files,
         email=user.email,
-        full_name=user.get_full_name(),
+        fullname=user.get_full_name(),
         type_ext = type_ext,
         communes=','.join([commune.code for commune in communes]),
         organisation=organisation.legal_name,
