@@ -1,0 +1,10 @@
+[
+  {
+    "model": "idgo_admin.mail",
+    "pk": "demande_extraction_majic_lme",
+    "fields": {
+      "subject": "Demande d'une extraction {type_ext}",
+      "message": "Bonjour,\n\nVous avez une demande d'extraction {type_ext} \u00e0 valider :\n\n    Nom : {fullname}\n    Codes INSEE des communes : {communes}\n    Organisation de rattachement : {organisation} (Code d'identification : {organisation_pk})\n\nMerci de traiter cette demande : {url}\n\nCi-joint les documents sign\u00e9s:\n- Clause de confidentialit\u00e9.\n- D\u00e9claration du D\u00e9l\u00e9gu\u00e9 \u00e0 la Protection des Donn\u00e9es Personnelles.\n\n--\nCeci est un message automatique. Merci de ne pas y r\u00e9pondre."
+    }
+  }
+]
