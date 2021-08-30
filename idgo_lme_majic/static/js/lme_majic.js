@@ -89,6 +89,7 @@ function uuidv4() {
           show_msg_error(msg_error)
       });
   }
+
   function downloadFile(){
     // activer loader
     $("#loading").removeClass('hide');

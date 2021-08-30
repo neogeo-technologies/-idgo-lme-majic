@@ -18,7 +18,7 @@
         
         {% if majics  %}
         <hr>
-          <h4><b>FAIRE UNE EXTRACTION</b></h4>
+          <h4><b>ACCÈS AUX EXTRACTIONS DEMANDÉ</b></h4>
           {% for majic in majics %}
             {%if majic.majic%}
               <div class="row">
@@ -92,7 +92,7 @@
               </form>
               <div id='statut-id-{{ forloop.counter0 }}'></div>
             {%else%}
-              La demandeee d'extraction est en validation pour les administrateurs. {{majic.majic}}
+              La demande d'accès aux extractions est en cours de validation par les administrateurs.
             {%endif%}
           {% endfor %}
         {% endif %}
@@ -103,12 +103,12 @@
             <div style="padding-bottom: 5em;">
               <hr>
               <div>
-                <h4><b>DEMANDER EXTRACTION</b></h4>
+                <h4><b>DEMANDER L'ACCÈS AUX EXTRACTIONS</b></h4>
                 <p>
-                  Pour demander une extraction MAJIC (Mise A Jour des Informations Cadastrales), il faudrait télécharger les documents suivants,
-                  <br> les signer et les ajouter dans le formulaire ci-dessus.
+                  Pour demander l'accès aux extractions MAJIC (Mise A Jour des Informations Cadastrales), les documents suivants 
+                  <br> doivent être signés et ajoutés au formulaire ci-dessous.
                 </p>
-                <h5><b>TÉLÉCHARGER DOCUMENTS À SIGNER</b></h5>
+                <h5><b>TÉLÉCHARGER LES DOCUMENTS À SIGNER</b></h5>
                 <div>
                   <a href="{% static "Declaration_du_Delegue_a_la_Protection_des_Donnees_Personnelles.pdf" %}" target="_blank"
                     class="card-link">Clause de confidentialité
@@ -166,7 +166,7 @@
                     <div class="col-sm-10" style="padding-left: 2em;">
                       <div class="row">
                         <div class="mb-3">
-                          <label for="formFile" class="form-label">Ajouter Clause de confidentialité signé</label>
+                          <label for="formFile" class="form-label">Ajouter la Clause de confidentialité signée</label>
                           <div>
                             <div id="list_file_clause"></div>
                             <input 
@@ -179,7 +179,7 @@
                           </div>
                         </div>
                         <div class="mb-3">
-                          <label for="formFile" class="form-label">Ajouter Déclaration du Délégué à la Protection des Données Personnelles signé</label>
+                          <label for="formFile" class="form-label">Ajouter la Déclaration du Délégué à la Protection des Données Personnelles signée</label>
                           <div>
                             <div id="list_file_declaration"></div>
                             <input 
@@ -195,7 +195,7 @@
                       <br>
                       <input id="majic" name="majic" type="hidden" value="true">
                       <div id="button-submit" class="buttons-on-the-right-side">
-                        <button type="submit" class="btn btn-primary">Envoyer demande</button>
+                        <button type="submit" class="btn btn-primary">Envoyer la demande</button>
                       </div>
                     </div>
                   </div>
