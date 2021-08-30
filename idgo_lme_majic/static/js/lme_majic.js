@@ -37,20 +37,23 @@ function uuidv4() {
   }
   
   
-  function check_extract(statut="", url=""){
+  function check_extract(statut="", url="", params=[]){
     var organisation = document.getElementById('0-organisation-input');
     var secret = document.getElementById('secret');
     var request_id = document.getElementById('request_id');
     var type = document.getElementById('title').getAttribute('value');
 
-    params= {
-      'organisation': organisation.value,
-      'secret': secret.value,
-      'request_id': request_id.value,
-      'mode': mode,
-      'statut': statut,
-      'url': url,
+    if (params.length == 0){
+      params= {
+        'organisation': organisation.value,
+        'secret': secret.value,
+        'request_id': request_id.value,
+        'mode': mode,
+        'statut': statut,
+        'url': url,
+      }
     }
+
     axios({
       method: 'get',
       url: 'majic_check',
@@ -61,21 +64,30 @@ function uuidv4() {
           let response_html = '';
           // IF RESPONSE STATUT OK
           if (response.data.statut == 'OK'){
-            setCookie('extraction-'+ type, secret.value + response.data.url, 1);
-            response_html = response_ok(response.data.url, secret.value, request_id.value)
+            localStorage.removeItem('params-'+ type);
+            request_id = document.getElementById('request_id').value = params.request_id;
+            setCookie('extraction-'+ type, params.secret + response.data.url, 1);
+            response_html = response_ok(response.data.url, params.secret, params.request_id)
             }
           // IF RESPONSE STATUT PENDING
           if (response.data.statut == 'pending'){
-            response_html = `<h5> Statut de la demande : En cours</h5>
-                            <small>Merci de patienter quelques instants ...</small>
+            response_html = `<h5>Extraction en cours ...</h5>
+                            <p>Voici le mot de passe pour l'archive : <b>` + params.secret + `</b>. Merci de le noter, 
+                            nous ne le conservons pas dans notre système.</p>
                             <div class="loader"></div>`
-            setTimeout(function(){ check_extract('pending', response.data.url); }, 30000);
+                            params['statut'] = response.data.statut;
+                            params['url'] = response.data.url;
+                            localStorage.setItem('params-'+ type, JSON.stringify(params));
+            setTimeout(function(){ check_extract('pending', response.data.url, params); }, 30000);
           }
           // IF RESPONSE STATUT ERROR
           if (response.data.statut == 'error'){
             response_html = `<h5> Un erreur s'est produit lors de votre demande. Merci Contactez aux administrateurs du site.</h5>
                             <div class="spinner-border" role="status">
                             <div class="loader"></div>`
+                            params['statut'] = response.data.statut;
+                            params['url'] = response.data.url;
+                            localStorage.setItem('params-'+ type, JSON.stringify(params));
             setTimeout(function(){ check_extract()}, 3000);
           }
           set_response(response_html)
@@ -90,11 +102,12 @@ function uuidv4() {
       });
   }
 
-  function downloadFile(){
+  function downloadFile(request_id){
     // activer loader
     $("#loading").removeClass('hide');
     var type = document.getElementById('title').getAttribute('value');
-    var request_id = document.getElementById('request_id');
+    // var request_id = document.getElementById('request_id');
+
     params= {
       'request_id': request_id.value,
       'type': type,
@@ -130,11 +143,11 @@ function uuidv4() {
               </div>
             </div>
             <h5> Télécharger l'extraction : 
-              <a href="#" onclick="downloadFile();">
+              <a href="#" onclick="downloadFile(request_id);">
                 Fichier zip
               </a>
             </h5>
-            Code secret: ${secret}`
+            Code secret: <b>${secret}</b>`
   }
   
   function set_response(response_html){
@@ -181,6 +194,24 @@ function uuidv4() {
   var mode = '';
 
   $(document).ready(function() {
+    var type = document.getElementById('title').getAttribute('value');
+    var params = localStorage.getItem('params-' + type);
+    if (params){
+      var response_html = ''
+      var retrieve_params = JSON.parse(params)
+      if (retrieve_params.statut != 'OK'){
+        response_html = `<h5> Statut de la demande : En cours</h5>
+                            <small>Merci de patienter quelques instants ...</small>
+                            <div class="loader"></div>`
+        set_response(response_html)
+        check_extract(retrieve_params.statut, retrieve_params.url, retrieve_params)
+      }
+      else{
+        response_html = response_ok(retrieve_params.url, retrieve_params.secret, retrieve_params.request_id)
+        set_response(response_html)
+      }
+    }
+    
     // majic-lme-form
     const majicLmeForm = document.getElementById('majic-lme-form');
     if (majicLmeForm) {
@@ -196,14 +227,19 @@ function uuidv4() {
     // Form for download files
     const download_form = document.getElementById('download-form');
     if (download_form !== null) {
-      check_cookies();
-      // INIT UUID FOR FORM EXTRACTION
-      var request_id = document.getElementById('request_id').value = uuidv4();
-      document.getElementById('secret').value = request_id.substring(6, 12);
-      download_form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        check_extract()
-      });
+      var request_id = check_cookies();
+      if (request_id){
+        request_id = document.getElementById('request_id').value = request_id;
+      }
+      else{
+        // INIT UUID FOR FORM EXTRACTION
+        request_id = document.getElementById('request_id').value = uuidv4();
+        document.getElementById('secret').value = request_id.substring(6, 12);
+        download_form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          check_extract()
+        });
+      }
     }
   });
   

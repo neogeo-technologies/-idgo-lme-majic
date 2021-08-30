@@ -18,7 +18,11 @@
         
         {% if majics  %}
         <hr>
-          <h4><b>ACCÈS AUX EXTRACTIONS DEMANDÉ</b></h4>
+          {% if majics.majic  %}
+          <h4><b>DEMANDE D'EXTRACTION</b></h4>
+          {% else %}
+            <h4><b>DEMANDE D'ACCÈS EN COURS D'INSTRUCTION</b></h4>
+          {% endif %}
           {% for majic in majics %}
             {%if majic.majic%}
               <div class="row">
@@ -210,17 +214,18 @@
 </div>
 
 <script>
-
   function check_cookies(){
-      var cookieExtraction = checkCookie('extraction-majic');
-      if (cookieExtraction != false) {
-        let secret = cookieExtraction.substring(0, 6)
-        let request_id = cookieExtraction.split("request_id=")[1];
-        response_html = response_ok(cookieExtraction.substring(6), secret, request_id)
-        set_response(response_html)
-      }
+    var cookieExtraction = checkCookie('extraction-majic');
+    var request_id = 0;
+    if (cookieExtraction != false) {
+      let secret = cookieExtraction.substring(0, 6)
+      request_id = cookieExtraction.split("request_id=")[1];
+      response_html = response_ok(cookieExtraction.substring(6), secret, request_id)
+      set_response(response_html)
     }
-  </script>
+    return request_id;
+  }
+</script>
 
 {% endblock main %}
 

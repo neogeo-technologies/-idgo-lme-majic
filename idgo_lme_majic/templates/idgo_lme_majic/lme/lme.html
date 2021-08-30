@@ -22,7 +22,11 @@
       
         {% if lmes  %}
         <hr>
-          <h4><b>ACCÈS AUX EXTRACTIONS DEMANDÉ</b></h4>
+          {% if lmes.lme  %}
+          <h4><b>DEMANDE D'EXTRACTION</b></h4>
+          {% else %}
+            <h4><b>DEMANDE D'ACCÈS EN COURS D'INSTRUCTION</b></h4>
+          {% endif %}
           {% for lme in lmes %}
             {%if lme.lme%}
               <div class="row">
@@ -171,15 +175,16 @@
   </div>
 </div>
 <script>
-
-function check_cookies(){
+  function check_cookies(){
     var cookieExtraction = checkCookie('extraction-lme');
+    var request_id = 0;
     if (cookieExtraction != false) {
       let secret = cookieExtraction.substring(0, 6)
-      let request_id = cookieExtraction.split("request_id=")[1];
+      request_id = cookieExtraction.split("request_id=")[1];
       response_html = response_ok(cookieExtraction.substring(6), secret, request_id)
       set_response(response_html)
     }
+    return request_id;
   }
 </script>
 
