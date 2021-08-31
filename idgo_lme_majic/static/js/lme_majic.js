@@ -168,18 +168,9 @@ function uuidv4() {
       hiddenElement('organisation-inputs');
     }
     document.getElementById(pkOrganisationInput).checked = true;
-    var fileDeclaration = document.getElementById('fileDeclaration');
-    var listFileDeclaration = document.getElementById('list_file_declaration');
     var fileClause = document.getElementById('fileClause');
     var listFileClause = document.getElementById('list_file_clause');
     
-    if (fileDeclaration !== null && fileDeclaration.value == '') {
-      fileDeclaration.onchange = function () {
-        var files = Array.from(this.files);
-        files = files.map(file => file.name);
-        listFileDeclaration.innerHTML = files.join('<br/>');
-      }
-    }
     if (fileClause !== null && fileClause.value == '') {
       fileClause.onchange = function () {
         var files = Array.from(this.files);
@@ -252,13 +243,8 @@ function uuidv4() {
     // Validation flag
     let valid = true;
     let msg_error = '';
-    if( document.getElementById("fileDeclaration").files.length == 0 ){
-      msg_error = '<li>Vous devez charger le document de la declaration signé.</li>';
-      show_msg_error(msg_error);
-      valid = false;
-    }
     if( document.getElementById("fileClause").files.length == 0 ){
-      msg_error = '<li>Vous devez charger le document de la clause signé.</li>';
+      msg_error = '<li>Vous devez charger le document de l’acte d’engagement signé.</li>';
       show_msg_error(msg_error);
       valid = false;
     }
