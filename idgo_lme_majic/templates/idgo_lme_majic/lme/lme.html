@@ -80,7 +80,7 @@
                       Procédure de mise à disposition des fichiers fonciers DGFiP
                     </a>
                 </p>
-                <h5><b>TÉLÉCHARGER LES DOCUMENTS À SIGNER</b></h5>
+                <h5><b>TÉLÉCHARGER LE DOCUMENT À SIGNER</b></h5>
                 <div>
                   Téléchargez et remplissez 
                   
@@ -92,14 +92,9 @@
                 <div>
                   <p>
                     Fournir les coordonnées du DPO de votre organisme. S’il n’y en n’a pas, votre organisme doit en nommer un et
-                    faire la déclaration sur
+                    faire la déclaration sur le site de la CNIL :
                     <a href="https://www.cnil.fr/fr/designation-dpo">
                       https://www.cnil.fr/fr/designation-dpo.
-                    </a>
-                    <br>
-                    <a href="{% static "Declaration_du_Delegue_a_la_Protection_des_Donnees_Personnelles.pdf" %}" target="_blank"
-                      class="card-link">
-                      Déclaration du Délégué à la Protection des Données Personnelles
                     </a>
                   </p>
                 </div>
@@ -150,7 +145,7 @@
                     <div class="col-sm-10" style="padding-left: 2em;">
                       <div class="row">
                         <div class="mb-3">
-                          <label for="formFile" class="form-label">Ajouter l’acte d’engagement signée</label>
+                          <label for="formFile" class="form-label">Ajouter l’acte d’engagement signé</label>
                           <div>
                             <div id="list_file_clause"></div>
                             <input 
@@ -160,19 +155,6 @@
                               value="Parcourir..." 
                               onclick="document.getElementById('fileClause').click();" />
                             <input type="file" style="display:none;" id="fileClause" name="fileClause"/>
-                          </div>
-                        </div>
-                        <div class="mb-3">
-                          <label for="formFile" class="form-label">Ajouter la Déclaration du Délégué à la Protection des Données Personnelles signée</label>
-                          <div>
-                            <div id="list_file_declaration"></div>
-                            <input 
-                              type="button" 
-                              class="btn btn-primary" 
-                              id="loadFileXml" 
-                              value="Parcourir..." 
-                              onclick="document.getElementById('fileDeclaration').click();" />
-                            <input type="file" style="display:none;" id="fileDeclaration" name="fileDeclaration"/>
                           </div>
                         </div>
                       </div>

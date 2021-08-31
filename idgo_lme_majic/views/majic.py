@@ -75,10 +75,8 @@ class MajicCreate(CreateView):
                 instance.user = user
                 instance.date_expiration_majic = add_years(datetime.today(), 1)
                 instance.save()
-                file_declaration = request.FILES['fileDeclaration']
                 file_clause = request.FILES['fileClause']
                 files = [
-                    file_declaration,
                     file_clause,
                 ]
                 url = instance.get_full_admin_url()
