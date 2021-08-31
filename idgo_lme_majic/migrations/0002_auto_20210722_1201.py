@@ -9,7 +9,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('idgo_admin', '0007_auto_20210722_1201'),
         ('idgo_lme_majic', '0001_initial'),
     ]
 
