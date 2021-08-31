@@ -22,7 +22,11 @@
       
         {% if lmes  %}
         <hr>
-          <h4><b>EXTRACTION DEMANDÉE</b></h4>
+          {% if lmes.lme  %}
+          <h4><b>DEMANDE D'EXTRACTION</b></h4>
+          {% else %}
+            <h4><b>DEMANDE D'ACCÈS EN COURS D'INSTRUCTION</b></h4>
+          {% endif %}
           {% for lme in lmes %}
             {%if lme.lme%}
               <div class="row">
@@ -55,7 +59,7 @@
               </form>
               <div id='statut-id-{{ forloop.counter0 }}'></div>
             {%else%}
-              La demande d'extraction est en validation pour les administrateurs.
+              La demande d'accès aux extractions est en cours de validation par les administrateurs.
             {%endif%}
           {% endfor %}
         {% endif %}
@@ -65,12 +69,12 @@
             <div style="padding-bottom: 5em;">
               <hr>
               <div>
-                <h4><b>DEMANDER EXTRACTION</b></h4>
+                <h4><b>DEMANDER L'ACCÈS AUX EXTRACTIONS</b></h4>
                 <p>
-                  Pour demander une extraction LME
-                  les signer et les ajouter dans le formulaire ci-dessus.
+                  Pour demander l'accès aux extractions LME, 
+                  les documents suivants doivent être signés et ajoutés au formulaire ci-dessous.
                 </p>
-                <h5><b>TÉLÉCHARGER DOCUMENTS À SIGNER</b></h5>
+                <h5><b>TÉLÉCHARGER LES DOCUMENTS À SIGNER</b></h5>
                 <div>
                   <a href="{% static "Declaration_du_Delegue_a_la_Protection_des_Donnees_Personnelles.pdf" %}" target="_blank"
                     class="card-link">Clause de confidentialité
@@ -128,7 +132,7 @@
                     <div class="col-sm-10" style="padding-left: 2em;">
                       <div class="row">
                         <div class="mb-3">
-                          <label for="formFile" class="form-label">Ajouter Clause de confidentialité signé</label>
+                          <label for="formFile" class="form-label">Ajouter la Clause de confidentialité signée</label>
                           <div>
                             <div id="list_file_clause"></div>
                             <input 
@@ -141,7 +145,7 @@
                           </div>
                         </div>
                         <div class="mb-3">
-                          <label for="formFile" class="form-label">Ajouter Déclaration du Délégué à la Protection des Données Personnelles signé</label>
+                          <label for="formFile" class="form-label">Ajouter la Déclaration du Délégué à la Protection des Données Personnelles signée</label>
                           <div>
                             <div id="list_file_declaration"></div>
                             <input 
@@ -157,7 +161,7 @@
                       <br>
                       <input id="lme" name="lme" type="hidden" value="true">
                       <div id="button-submit" class="buttons-on-the-right-side">
-                        <button type="submit" class="btn btn-primary">Envoyer demande</button>
+                        <button type="submit" class="btn btn-primary">Envoyer la demande</button>
                       </div>
                     </div>
                   </div>
@@ -171,15 +175,16 @@
   </div>
 </div>
 <script>
-
-function check_cookies(){
+  function check_cookies(){
     var cookieExtraction = checkCookie('extraction-lme');
+    var request_id = 0;
     if (cookieExtraction != false) {
       let secret = cookieExtraction.substring(0, 6)
-      let request_id = cookieExtraction.split("request_id=")[1];
+      request_id = cookieExtraction.split("request_id=")[1];
       response_html = response_ok(cookieExtraction.substring(6), secret, request_id)
       set_response(response_html)
     }
+    return request_id;
   }
 </script>
 
