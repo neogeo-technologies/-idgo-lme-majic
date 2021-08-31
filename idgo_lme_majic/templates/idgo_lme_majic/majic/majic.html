@@ -11,15 +11,16 @@
       <div class="col-md-offset-1 col-md-10" id="title" value='majic'>
         <h1>Espace MAJIC</h1>
         <p>
-          L'espace MAJIC III (Mise A Jour des Informations Cadastrales) comportent des renseignements relatifs aux propriétés bâties et non bâties.
+          Les données MAJIC 2021 sont disponibles au téléchargement pour les partenaires de la Région Provence-Alpes-Côte
+          d’Azur sous réserve d’être ayants droit de la DGFIP.
           <br>
-          L'accès et la délivrance des données cadastrales ont été organisés dès la création du cadastre.
+          Ce nouveau service prend en charge vos demandes de fichiers MAJIC depuis le mois de septembre 2021.
         </p>
         
         {% if majics  %}
         <hr>
-          {% if majics.majic  %}
-          <h4><b>DEMANDE D'EXTRACTION</b></h4>
+          {% if majics.0.majic  %}
+            <h4><b>DEMANDE D'EXTRACTION</b></h4>
           {% else %}
             <h4><b>DEMANDE D'ACCÈS EN COURS D'INSTRUCTION</b></h4>
           {% endif %}
@@ -109,19 +110,37 @@
               <div>
                 <h4><b>DEMANDER L'ACCÈS AUX EXTRACTIONS</b></h4>
                 <p>
-                  Pour demander l'accès aux extractions MAJIC (Mise A Jour des Informations Cadastrales), les documents suivants 
-                  <br> doivent être signés et ajoutés au formulaire ci-dessous.
+                  Prenez connaissance des procédures et contraintes applicables sur ces données :
+                  <br>
+                  <a href="{% static "Declaration_du_Delegue_a_la_Protection_des_Donnees_Personnelles.pdf" %}" 
+                    target="_blank"
+                    class="card-link"
+                    >
+                      Procédure de mise à disposition des fichiers fonciers DGFiP
+                    </a>
                 </p>
                 <h5><b>TÉLÉCHARGER LES DOCUMENTS À SIGNER</b></h5>
                 <div>
-                  <a href="{% static "Declaration_du_Delegue_a_la_Protection_des_Donnees_Personnelles.pdf" %}" target="_blank"
-                    class="card-link">Clause de confidentialité
+                  Téléchargez et remplissez 
+                  
+                  <a href="{% static "Clause_de_confidentialite.pdf" %}" target="_blank"
+                    class="card-link">l’acte d’engagement.
                   </a>
                 </div>
+
                 <div>
-                  <a href="{% static "Clause_de_confidentialite.pdf" %}" target="_blank"
-                    class="card-link">Déclaration du Délégué à la Protection des Données Personnelles
-                  </a>
+                  <p>
+                    Fournir les coordonnées du DPO de votre organisme. S’il n’y en n’a pas, votre organisme doit en nommer un et
+                    faire la déclaration sur
+                    <a href="https://www.cnil.fr/fr/designation-dpo">
+                      https://www.cnil.fr/fr/designation-dpo.
+                    </a>
+                    <br>
+                    <a href="{% static "Declaration_du_Delegue_a_la_Protection_des_Donnees_Personnelles.pdf" %}" target="_blank"
+                      class="card-link">
+                      Déclaration du Délégué à la Protection des Données Personnelles
+                    </a>
+                  </p>
                 </div>
               </div>
             <br>
@@ -170,7 +189,7 @@
                     <div class="col-sm-10" style="padding-left: 2em;">
                       <div class="row">
                         <div class="mb-3">
-                          <label for="formFile" class="form-label">Ajouter la Clause de confidentialité signée</label>
+                          <label for="formFile" class="form-label">Ajouter l’acte d’engagement signée</label>
                           <div>
                             <div id="list_file_clause"></div>
                             <input 
