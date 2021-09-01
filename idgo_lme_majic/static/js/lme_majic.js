@@ -42,8 +42,7 @@ function uuidv4() {
     var secret = document.getElementById('secret');
     var request_id = document.getElementById('request_id');
     var type = document.getElementById('title').getAttribute('value');
-    console.log(mode)
-    console.log(mode.value)
+
     if (params.length == 0){
       params= {
         'organisation': organisation.value,
