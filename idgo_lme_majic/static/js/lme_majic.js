@@ -42,18 +42,18 @@ function uuidv4() {
     var secret = document.getElementById('secret');
     var request_id = document.getElementById('request_id');
     var type = document.getElementById('title').getAttribute('value');
-
+    console.log(mode)
+    console.log(mode.value)
     if (params.length == 0){
       params= {
         'organisation': organisation.value,
         'secret': secret.value,
         'request_id': request_id.value,
-        'mode': mode,
+        'mode': mode.value,
         'statut': statut,
         'url': url,
       }
     }
-
     axios({
       method: 'get',
       url: 'majic_check',
@@ -180,9 +180,19 @@ function uuidv4() {
     }
   }
   function handleChange(src) {
-    mode = src.value;
+    mode = src;
   }
-  var mode = '';
+
+  window.onload = function() {
+    var mode = document.getElementById('mode');
+    if (mode != null){
+      mode = document.getElementById('mode')
+    }
+    else{
+      mode = ''
+    }
+  }
+  
 
   $(document).ready(function() {
     var type = document.getElementById('title').getAttribute('value');
