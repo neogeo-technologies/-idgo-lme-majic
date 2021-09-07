@@ -25,3 +25,4 @@ _**TODO** : Création des fichiers de configuration, création des bases de donn
 
 MAJIC_API = 'http://majic.datasud.neogeo.fr/'
 
+BASE_MAJIC_LME = DOMAIN_NAME + '/lmemajic/'
