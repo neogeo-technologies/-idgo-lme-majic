@@ -4,6 +4,7 @@ import mimetypes
 from datetime import date
 
 from django.apps import apps
+from django.conf import settings
 from django.core.mail import get_connection
 from django.core.mail.message import EmailMultiAlternatives
 
@@ -92,3 +93,33 @@ def send_demande_extraction_majic_lme(user, type_ext, organisation, url, attach_
         url=url,
         username=user.username,
         website=organisation.website or '- adresse url manquante -')
+
+
+# Pour notifier à l'utilisateur qu'il a l'accès MAJIC/LME
+def send_mail_acces(instance, **kwargs):
+    if instance.majic:
+        type_ext = 'MAJIC'
+        date = instance.date_expiration_majic
+    elif instance.lme:
+        type_ext = 'LME'
+        date = instance.date_expiration_lme
+    else:
+        # NO SEND
+        return
+    user = instance.user
+    organisation = instance.organisation
+    url = settings.BASE_MAJIC_LME + type_ext.lower()
+    date = date.strftime('%d/%m/%Y')
+    territoire = instance.organisation.jurisdiction
+
+    return sender(
+        'acces_available_to_majic_lme',
+        to=[user.email],
+        email=user.email,
+        type_ext = type_ext,
+        date=date,
+        url=url,
+        territoire=territoire,
+        organisation=organisation.legal_name,
+        username=user.username,
+        )
