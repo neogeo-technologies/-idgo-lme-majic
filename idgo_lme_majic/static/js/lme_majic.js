@@ -123,7 +123,7 @@ function uuidv4() {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
           link.href = url;
-          link.setAttribute('download', 'download_majic.7z');
+          link.setAttribute('download', 'download_' + type + '.7z');
           document.body.appendChild(link);
           link.click();
         })
