@@ -1,4 +1,3 @@
-
 function uuidv4() {
     return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
       (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -81,7 +80,7 @@ function uuidv4() {
           }
           // IF RESPONSE STATUT ERROR
           if (response.data.statut == 'error'){
-            response_html = `<h5> Un erreur s'est produit lors de votre demande. Merci Contactez aux administrateurs du site.</h5>
+            response_html = `<h5> Une erreur s'est produite lors de votre demande. Contactez les administrateurs du site.</h5>
                             <div class="spinner-border" role="status">
                             <div class="loader"></div>`
                             params['statut'] = response.data.statut;
@@ -95,7 +94,7 @@ function uuidv4() {
       .catch(function (response) {
           //handle error
           console.log('erreur', response);
-          msg_error = `<li>Une erreur s'est produit lors de la recuperation du fichier d'extraction. Contactez aux administrateur
+          msg_error = `<li>Une erreur s'est produite lors de la récupération du fichier d'extraction. Contactez les administrateurs
                        du site.</li>`;
           show_msg_error(msg_error)
       });
@@ -138,7 +137,7 @@ function uuidv4() {
   function response_ok(url, secret, request_id){
     return `<div id="loading" class="hide">
               <div id="loading-content">
-                Le télécharment du fichier est en cours...
+                Le téléchargement du fichier est en cours...
               </div>
             </div>
             <h5> Télécharger l'extraction : 
