@@ -3,6 +3,7 @@ from django.conf.urls import url
 from rest_framework.routers import DefaultRouter
 from idgo_lme_majic.views import MajicCreate
 from idgo_lme_majic.views import LmeCreate
+from idgo_lme_majic.views import home
 
 from idgo_lme_majic.views.majic import majic_check
 from idgo_lme_majic.views.majic import download_majic
@@ -15,6 +16,8 @@ app_name = 'idgo_lme_majic'
 router = DefaultRouter()
 
 urlpatterns = [
+   url('^$', home, name='home'),
+
    url('^majic/?$', MajicCreate.as_view(), name='majic'),
 
    url('^lme/?$', LmeCreate.as_view(), name='lme'),

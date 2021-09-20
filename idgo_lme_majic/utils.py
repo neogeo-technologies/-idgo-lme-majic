@@ -111,15 +111,22 @@ def send_mail_acces(instance, **kwargs):
     url = settings.BASE_MAJIC_LME + type_ext.lower()
     date = date.strftime('%d/%m/%Y')
     territoire = instance.organisation.jurisdiction
-
+    JurisdictionCommune = apps.get_model(
+        app_label='idgo_admin', model_name='JurisdictionCommune')
+    communes = [
+        instance.commune for instance
+        in JurisdictionCommune.objects.filter(jurisdiction=organisation.jurisdiction)]
     return sender(
         'acces_available_to_majic_lme',
         to=[user.email],
         email=user.email,
+        fullname=user.get_full_name(),
         type_ext = type_ext,
         date=date,
+        communes=','.join([commune.code for commune in communes]),
         url=url,
         territoire=territoire,
         organisation=organisation.legal_name,
+        organisation_pk=organisation.pk,
         username=user.username,
         )

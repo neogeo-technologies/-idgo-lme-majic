@@ -15,6 +15,21 @@
           d’Azur sous réserve d’être ayants droit de la DGFIP.
           <br>
           Ce nouveau service prend en charge vos demandes de fichiers MAJIC depuis le mois de septembre 2021.
+          <br>
+          Seuls les référents sont autorisés à récupérer les données MAJIC de leurs territoires. 
+          Si vous n'êtes pas référent, vous devez en faire la demande avant d'accéder au service.
+          <br>
+          Demander pour être référent de : 
+          {% for organisation in organisations %}
+            <div>
+              - 
+              <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
+                {{ organisation.legal_name }} 
+              </a>
+            </div>
+          {% endfor %}
+
+          
         </p>
         
         {% if majics  %}
@@ -112,7 +127,7 @@
                 <p>
                   Prenez connaissance des procédures et contraintes applicables sur ces données :
                   <br>
-                  <a href="{% static "procedure_mad_majic.pdf" %}" 
+                  <a href="{% static "files/majic/procedure_mad_majic.pdf" %}" 
                     target="_blank"
                     class="card-link"
                     >
@@ -123,7 +138,7 @@
                 <div>
                   Téléchargez et remplissez 
                   
-                  <a href="{% static "Clause_de_confidentialite.pdf" %}" target="_blank"
+                  <a href="{% static "files/majic/Clause_de_confidentialite.pdf" %}" target="_blank"
                     class="card-link">l’acte d’engagement.
                   </a>
                 </div>
