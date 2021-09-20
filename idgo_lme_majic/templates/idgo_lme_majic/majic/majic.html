@@ -18,6 +18,18 @@
           <br>
           Seuls les référents sont autorisés à récupérer les données MAJIC de leurs territoires. 
           Si vous n'êtes pas référent, vous devez en faire la demande avant d'accéder au service.
+          <br>
+          Demander pour être référent de : 
+          {% for organisation in organisations %}
+            <div>
+              - 
+              <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
+                {{ organisation.legal_name }} 
+              </a>
+            </div>
+          {% endfor %}
+
+          
         </p>
         
         {% if majics  %}
