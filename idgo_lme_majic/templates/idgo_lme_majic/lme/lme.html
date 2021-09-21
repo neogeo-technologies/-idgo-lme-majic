@@ -20,7 +20,25 @@
         La Région met ainsi gratuitement à disposition des collectivités et prestataires autorisés les données géographiques 
         qu’elle a pu collecter auprès des opérateurs d’infrastructures de réseaux présents sur son territoire. Les fichiers 
         sont dématérialisés et correspondent à l’emprise de la collectivité demandeuse.
+        <br><br>
+        Seuls les référents sont autorisés à récupérer les données LME de leurs territoires. 
+        Si vous n'êtes pas référent, vous devez en faire la demande avant d'accéder au service.
+        <br>
       </p>
+
+      {% if has_not_one_territoire %}
+        Cliquez sur l'organisation pour definir le territoire de compétence :
+            {% for organisation in organisations %}
+              {% if organisation.jurisdiction is None%}
+                <div>
+                  - 
+                  <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
+                    {{ organisation.legal_name }} 
+                  </a>
+                </div>
+                {% endif %}
+            {% endfor %}
+          {% endif %}
       
         {% if lmes  %}
         <hr>
@@ -67,7 +85,7 @@
         {% endif %}
         <br>
         {% if lmes|length == 0%}
-          {% if organisations  %}
+          {% if has_one_territoire  %}
             <div style="padding-bottom: 5em;">
               <hr>
               <div>
@@ -130,19 +148,23 @@
                               </label>
                             </div>
                           {%else%}
-                          <b>{{ organisation.legal_name }}</b> - Le territoire de compétence n'est pas défini.
+                            <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
+                              {{ organisation.legal_name }}
+                            </a>
+                              - Le territoire de compétence n'est pas défini, vous ne pouvez pas accéder au service.
                           {% endif %}
                         {% endfor %}
                       </fieldset>
                     </div>
                   </div>
-                  <div class="col-sm-7">
-                    <h5)>TERRITOIRE DE COMPÉTENCE</h5>
-                    {% if organisations  %}
-                      {% include "idgo_lme_majic/organisation/jurisdiction.html" %}
-                    {% endif %}
-                  </div>
-              
+                  {%if has_one_territoire %}
+                    <div class="col-sm-7">
+                      <h5)>TERRITOIRE DE COMPÉTENCE</h5>
+                      {% if organisations  %}
+                        {% include "idgo_lme_majic/organisation/jurisdiction.html" %}
+                      {% endif %}
+                    </div>
+                  {% endif %}
                   <br>
                   <div id="organisation-inputs">
                     <div class="col-sm-10" style="padding-left: 2em;">

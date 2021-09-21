@@ -19,16 +19,19 @@
           Seuls les référents sont autorisés à récupérer les données MAJIC de leurs territoires. 
           Si vous n'êtes pas référent, vous devez en faire la demande avant d'accéder au service.
           <br>
-          Demander pour être référent de : 
-          {% for organisation in organisations %}
-            <div>
-              - 
-              <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
-                {{ organisation.legal_name }} 
-              </a>
-            </div>
-          {% endfor %}
-
+          {% if has_not_one_territoire %}
+            <br>Cliquez sur l'organisation pour definir le territoire de compétence :
+            {% for organisation in organisations %}
+              {% if organisation.jurisdiction is None%}
+                <div>
+                  - 
+                  <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
+                    {{ organisation.legal_name }} 
+                  </a>
+                </div>
+                {% endif %}
+            {% endfor %}
+          {% endif %}
           
         </p>
         
@@ -119,7 +122,7 @@
       
         <br>
         {% if majics|length == 0%}
-          {% if organisations  %}
+          {% if has_one_territoire  %}
             <div style="padding-bottom: 5em;">
               <hr>
               <div>
@@ -183,19 +186,23 @@
                               </label>
                             </div>
                           {%else%}
-                          <b>{{ organisation.legal_name }}</b> - Le territoire de compétence n'est pas défini.
+                            <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
+                              {{ organisation.legal_name }}
+                            </a>
+                              - Le territoire de compétence n'est pas défini, vous ne pouvez pas accéder au service.
                           {% endif %}
                         {% endfor %}
                       </fieldset>
                     </div>
                   </div>
-                  <div class="col-sm-7">
-                    <h5)>TERRITOIRE DE COMPÉTENCE</h5>
-                    {% if organisations  %}
-                      {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
-                    {% endif %}
-                  </div>
-              
+                  {%if has_one_territoire %}
+                    <div class="col-sm-7">
+                      <h5)>TERRITOIRE DE COMPÉTENCE</h5>
+                      {% if organisations  %}
+                        {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
+                      {% endif %}
+                    </div>
+                  {% endif %}
                   <br>
                   <div id="organisation-inputs">
                     <div class="col-sm-10" style="padding-left: 2em;">
