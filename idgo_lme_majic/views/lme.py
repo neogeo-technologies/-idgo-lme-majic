@@ -25,6 +25,8 @@ class LmeCreate(CreateView):
     def get_context_data(self, *args, **kwargs):
         profile = self.request.user.profile
         organisations = []
+        has_one_territoire = False
+        has_not_one_territoire = False
         today = datetime.today()
         try:
             lmes = UserMajicLme.objects.filter(user=self.request.user
@@ -35,6 +37,10 @@ class LmeCreate(CreateView):
         idx = 0
         for instance in Profile.objects.get(user=self.request.user
             ).referents.exclude(organisation__in=lmes):
+            if instance.jurisdiction:
+                has_one_territoire = True
+            else:
+                has_not_one_territoire = True
             organisations.append({
                 'organisation_pk': idx,
                 'pk': instance.pk,
@@ -47,6 +53,8 @@ class LmeCreate(CreateView):
             idx+=1
 
         context = {
+            'has_not_one_territoire': has_not_one_territoire,
+            'has_one_territoire': has_one_territoire,
             'profile': profile,
             'lmes' : lmes,
             'form': self.form_class,

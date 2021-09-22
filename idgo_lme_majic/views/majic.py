@@ -35,6 +35,8 @@ class MajicCreate(CreateView):
     def get_context_data(self, *args, **kwargs):
         profile = self.request.user.profile
         organisations = []
+        has_one_territoire = False
+        has_not_one_territoire = False
         today = datetime.today()
         try:
             majics = UserMajicLme.objects.filter(user=self.request.user
@@ -44,7 +46,10 @@ class MajicCreate(CreateView):
         idx = 0
         for instance in Profile.objects.get(user=self.request.user
             ).referents.exclude(organisation__in=majics):
-            
+            if instance.jurisdiction:
+                has_one_territoire = True
+            else:
+                has_not_one_territoire = True
             organisations.append({
                 'organisation_pk': idx,
                 'pk': instance.pk,
@@ -57,6 +62,8 @@ class MajicCreate(CreateView):
             idx+=1
 
         context = {
+            'has_not_one_territoire': has_not_one_territoire,
+            'has_one_territoire': has_one_territoire,
             'profile': profile,
             'majics' : majics,
             'form': self.form_class,
