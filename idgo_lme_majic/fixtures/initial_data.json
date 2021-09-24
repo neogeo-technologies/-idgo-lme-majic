@@ -4,7 +4,15 @@
     "pk": "demande_extraction_majic_lme",
     "fields": {
       "subject": "Demande d'une extraction {type_ext}",
-      "message": "Bonjour,\n\nVous avez une demande d'extraction {type_ext} \u00e0 valider :\n\n    Nom : {fullname}\n    Codes INSEE des communes : {communes}\n    Organisation de rattachement : {organisation} (Code d'identification : {organisation_pk})\n\nMerci de traiter cette demande : {url}\n\nCi-joint les documents sign\u00e9s:\n- Clause de confidentialit\u00e9.\n- D\u00e9claration du D\u00e9l\u00e9gu\u00e9 \u00e0 la Protection des Donn\u00e9es Personnelles.\n\n--\nCeci est un message automatique. Merci de ne pas y r\u00e9pondre."
+      "message": "Bonjour,\r\n\r\nVous avez une demande d'extraction {type_ext} \u00e0 valider :\r\n\r\n* Nom : {fullname}\r\n* Codes INSEE des communes : {communes}\r\n* Organisation de rattachement : {organisation} (Code d'identification : {organisation_pk})\r\n\r\nMerci de traiter cette demande :\r\n{url}\r\n\r\nCi-joint l'acte d'engagement sign\u00e9.\r\n\r\n--\r\nCeci est un message automatique. Merci de ne pas y r\u00e9pondre."
+    }
+  },
+  {
+    "model": "idgo_admin.mail",
+    "pk": "acces_available_to_majic_lme",
+    "fields": {
+      "subject": "Validation de votre acc\u00e8s aux extractions {type_ext}",
+      "message": "Bonjour {fullname},\r\n\r\nVotre demande d'acc\u00e8s aux extractions {type_ext} a \u00e9t\u00e9 valid\u00e9 par un administrateur.\r\nCet acc\u00e8s a \u00e9t\u00e9 valid\u00e9 pour une dur\u00e9e d'un an, pour l'organisation suivante :\r\n\r\n* Codes INSEE des communes : {communes}\r\n\r\n* Organisation de rattachement : {organisation} (Code d'identification : {organisation_pk})\r\n\r\n--\r\nCeci est un message automatique. Merci de ne pas y r\u00e9pondre."
     }
   }
 ]
