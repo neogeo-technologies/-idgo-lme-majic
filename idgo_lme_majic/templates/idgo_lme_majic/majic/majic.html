@@ -16,7 +16,10 @@
           Ce nouveau service prend en charge vos demandes de fichiers MAJIC depuis le mois de septembre 2021.
           <br>
           Seuls les référents sont autorisés à récupérer les données MAJIC de leurs territoires. 
-          Si vous n'êtes pas référent, vous devez en faire la demande avant d'accéder au service.
+          Si vous n'êtes pas référent, vous devez en faire la demande avant d'accéder au service, en vous rendant sur 
+          <a href="{% url 'idgo_admin:handle_show_organisation' %}#info ">
+            la page des Organisations.
+            </a>
           <br>
           {% if has_not_one_territoire %}
             <br>Cliquez sur l'organisation pour definir le territoire de compétence :
