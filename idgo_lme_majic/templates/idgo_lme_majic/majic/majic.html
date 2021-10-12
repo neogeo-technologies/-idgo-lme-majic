@@ -20,22 +20,26 @@
           <a href="{% url 'idgo_admin:handle_show_organisation' %}#info ">
             la page des Organisations.
             </a>
-          <br>
-          {% if has_not_one_territoire %}
-            <br>Cliquez sur l'organisation pour definir le territoire de compétence :
-            {% for organisation in organisations %}
-              {% if organisation.jurisdiction is None%}
-                <div>
-                  - 
-                  <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
-                    {{ organisation.legal_name }} 
-                  </a>
-                </div>
-                {% endif %}
-            {% endfor %}
+          </p>
+          {% if not majics %}
+            {% if has_not_one_territoire %}
+              <div id="has_not_one_territoire">
+                <p>
+                  <br>Cliquez sur l'organisation pour definir le territoire de compétence :
+                  {% for organisation in organisations %}
+                    {% if organisation.jurisdiction is None%}
+                      <div>
+                        - 
+                        <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
+                          {{ organisation.legal_name }} 
+                        </a>
+                      </div>
+                      {% endif %}
+                  {% endfor %}
+                </p>
+              </div>
+            {% endif %}
           {% endif %}
-          
-        </p>
         
         {% if majics  %}
         <hr>
@@ -240,6 +244,7 @@
   </div>
 </div>
 
+<script src="{% static "js/lme_majic.js" %}"></script>
 <script>
   function check_cookies(){
     var cookieExtraction = checkCookie('extraction-majic');
