@@ -25,21 +25,26 @@
         <br>
       </p>
 
-      {% if has_not_one_territoire %}
-        Cliquez sur l'organisation pour definir le territoire de compétence :
-            {% for organisation in organisations %}
-              {% if organisation.jurisdiction is None%}
-                <div>
-                  - 
-                  <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
-                    {{ organisation.legal_name }} 
-                  </a>
-                </div>
-                {% endif %}
-            {% endfor %}
-          {% endif %}
-      
-        {% if lmes  %}
+      {% if not lmes %}
+        {% if has_not_one_territoire %}
+          <div id="has_not_one_territoire">
+            <p>
+              Cliquez sur l'organisation pour definir le territoire de compétenceee :
+                {% for organisation in organisations %}
+                  {% if organisation.jurisdiction is None%}
+                    <div>
+                      - 
+                      <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
+                        {{ organisation.legal_name }} 
+                      </a>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+            </p>
+          </div>
+        {% endif %}
+      {% endif %}
+      {% if lmes  %}
         <hr>
           {% if lmes.0.lme  %}
           <h4><b>DEMANDE D'EXTRACTION</b></h4>
@@ -198,6 +203,9 @@
     </div>
   </div>
 </div>
+
+<script src="{% static "js/lme_majic.js" %}"></script>
+
 <script>
   function check_cookies(){
     var cookieExtraction = checkCookie('extraction-lme');
