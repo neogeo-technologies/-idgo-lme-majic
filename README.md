@@ -6,17 +6,10 @@ Application initialement développée dans un environnement virtuel __Python 3.5
 
 ```shell
 > cd /
-/> mkdir idgo_venv
 /> cd idgo_venv
-/idgo_venv> pyvenv-3.5 ./
 /idgo_venv> source bin/activate
-(idgo_venv) /idgo_venv> cd /path/to/idgo
-(idgo_venv) /idgo_venv> python setup.py
-(idgo_venv) /idgo_venv>
+(idgo_venv) /idgo_venv> pip install -e https://git.neogeo.fr/idgo/apps/idgo-lme-majic.git
 ```
-
-_**TODO** : Création des fichiers de configuration, création des bases de données, etc._
-
 
 ### Paramètres additionnels du `settings.py`
 
@@ -26,3 +19,12 @@ _**TODO** : Création des fichiers de configuration, création des bases de donn
 MAJIC_API = 'http://majic.datasud.neogeo.fr/'
 
 BASE_MAJIC_LME = DOMAIN_NAME + '/lmemajic/'
+
+
+## Données par défaut
+
+Installation des mails par défaut:
+
+```
+(idgo_venv) /idgo_venv> python manage.py loaddata src/idgo-lme-majic/idgo_lme_majic/fixtures/initial_data.json
+```
