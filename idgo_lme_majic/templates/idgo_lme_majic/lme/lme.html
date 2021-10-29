@@ -7,217 +7,186 @@
 <div class="container">
   <div class="row">
     <div class="alert alert-danger" style="display: none;" id="msg-validation-error"></div>
-      <div class="col-md-offset-1 col-md-10" id="title" value='lme'>
+    <div class="col-md-offset-1 col-md-10" id="title" value='lme'>
       <h1>Espace LME</h1>
       <p>
-        L’article L. 33-7 du CPCE issu de la loi n°2008-776 du 4 août 2008 de modernisation de l'économie accorde à l'État, 
-        aux collectivités territoriales et à leurs groupements un droit d’information sur l’implantation effective des 
-        infrastructures et réseaux de communications électroniques. Cette disposition législative est complétée par le 
-        décret n°2009-167, la loi du 22 mars 2011, ainsi qu’un décret et un arrêté du 18 avril 2012 qui viennent compléter 
+        L'article L. 33-7 du CPCE issu de la loi n°2008-776 du 4 août 2008 de modernisation de l'économie accorde à l'État,
+        aux collectivités territoriales et à leurs groupements un droit d'information sur l'implantation effective des
+        infrastructures et réseaux de communications électroniques. Cette disposition législative est complétée par le
+        décret n°2009-167, la loi du 22 mars 2011, ainsi qu'un décret et un arrêté du 18 avril 2012 qui viennent compléter
         et finaliser le dispositif réglementaire sur la connaissance des réseaux.
-        <br>
-        La Région met ainsi gratuitement à disposition des collectivités et prestataires autorisés les données géographiques 
-        qu’elle a pu collecter auprès des opérateurs d’infrastructures de réseaux présents sur son territoire. Les fichiers 
-        sont dématérialisés et correspondent à l’emprise de la collectivité demandeuse.
-        <br><br>
-        Seuls les référents sont autorisés à récupérer les données LME de leurs territoires. 
-        Si vous n'êtes pas référent, vous devez en faire la demande avant d'accéder au service.
-        <br>
+        <br />
+        La Région met ainsi gratuitement à disposition des collectivités et prestataires autorisés les données géographiques
+        qu'elle a pu collecter auprès des opérateurs d'infrastructures de réseaux présents sur son territoire. Les fichiers
+        sont dématérialisés et correspondent à l'emprise de la collectivité demandeuse.
+        <br /><br />
+        Seuls les référents sont autorisés à récupérer les données LME de leurs territoires.
+        Si vous n'êtes pas référent, vous devez en faire la demande avant d'accéder au service, en vous rendant sur
+        <a href="{% url 'idgo_admin:handle_show_organisation' %}#info">
+          la page des Organisations.
+        </a>
+        <br />
       </p>
-
       {% if not lmes %}
-        {% if has_not_one_territoire %}
-          <div id="has_not_one_territoire">
-            <p>
-              Cliquez sur l'organisation pour definir le territoire de compétenceee :
-                {% for organisation in organisations %}
-                  {% if organisation.jurisdiction is None%}
-                    <div>
-                      - 
-                      <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
-                        {{ organisation.legal_name }} 
-                      </a>
-                    </div>
-                  {% endif %}
-                {% endfor %}
-            </p>
-          </div>
-        {% endif %}
-      {% endif %}
-      {% if lmes  %}
-        <hr>
-          {% if lmes.0.lme  %}
-          <h4><b>DEMANDE D'EXTRACTION</b></h4>
-          {% else %}
-            <h4><b>DEMANDE D'ACCÈS EN COURS D'INSTRUCTION</b></h4>
+      {% if has_not_one_territoire %}
+      <div id="has_not_one_territoire">
+        <p>
+          Cliquez sur l'organisation pour définir le territoire de compétence :
+          {% for organisation in organisations %}
+          {% if organisation.jurisdiction is None %}
+          <ul>
+            <li>
+              <a href="{% url "idgo_admin:show_organisation" id=organisation.pk %}#info">
+                {{ organisation.legal_name }}
+              </a>
+            </li>
+          </ul>
           {% endif %}
-          {% for lme in lmes %}
-            {%if lme.lme%}
-              <div class="row">
-                <div class="col-sm-5">
-                  <h5>Accès valide jusqu'au 
-                    <b>{{lme.date_expiration_lme}}</b>
-                  </h5>
-                </div>
-                <div class="col-sm-7">
-                    <h5)>TERRITOIRE DE COMPÉTENCE</h5>
-                    {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
-                </div>
-              </div>
-              <form method="POST" action="" id="download-form">
-                {% csrf_token %}
-                <input 
-                  id="0-organisation-input"
-                  name="organisation" 
-                  type="hidden" 
-                  value="{{lme.organisation.pk}}">
-                
-                <input id="secret" name="secret" type="hidden" value="test">
-                <input id="mode" name="mode" type="hidden" value="">
-                <input id="request_id" name="request_id" type="hidden" value="">
-                <input id="download_file" name="download_file" type="hidden" value="true">
-
-                <div class="buttons-on-the-right-side">
-                  <button id="btn-download-form" type="submit" class="btn btn-primary">Demande de téléchargement</button>
-                </div>
-              </form>
-              <div id='statut-id-{{ forloop.counter0 }}'></div>
-            {%else%}
-              La demande d'accès aux extractions est en cours de validation par les administrateurs.
-            {%endif%}
           {% endfor %}
-        {% endif %}
-        <br>
-        {% if lmes|length == 0%}
-          {% if has_one_territoire  %}
-            <div style="padding-bottom: 5em;">
-              <hr>
-              <div>
-                <h4><b>DEMANDER L'ACCÈS AUX EXTRACTIONS</b></h4>
-                <p>
-                  Prenez connaissance des procédures et contraintes applicables sur ces données :
-                  <br>
-                  <a href="{% static "files/lme/Procedure_mise_a_disposition_fichiers_LME.pdf" %}" 
-                    target="_blank"
-                    class="card-link"
-                    >
-                      Procédure de mise à disposition des fichiers LME
+        </p>
+      </div>
+      {% endif %}
+      {% endif %}
+      {% if lmes %}
+      <hr>
+      {% if lmes.0.lme %}
+      <h4><strong>DEMANDE D'EXTRACTION</strong></h4>
+      {% else %}
+      <h4><strong>DEMANDE D'ACCÈS EN COURS D'INSTRUCTION</strong></h4>
+      {% endif %}
+      {% for lme in lmes %}
+      {% if lme.lme %}
+      <div class="row">
+        <div class="col-sm-5">
+          <h5>Accès valide jusqu'au
+            <strong>{{ lme.date_expiration_lme }}</strong>
+          </h5>
+        </div>
+        <div class="col-sm-7">
+          <h5>TERRITOIRE DE COMPÉTENCE</h5>
+          {% include "idgo_lme_majic/organisation/jurisdiction.html" %}
+        </div>
+      </div>
+      <form method="POST" action="" id="download-form">
+        {% csrf_token %}
+        <input id="0-organisation-input" name="organisation" type="hidden" value="{{lme.organisation.pk}}" />
+        <input id="secret" name="secret" type="hidden" value="test" />
+        <input id="mode" name="mode" type="hidden" value="" />
+        <input id="request_id" name="request_id" type="hidden" value="" />
+        <input id="download_file" name="download_file" type="hidden" value="true" />
+        <div class="buttons-on-the-right-side">
+          <button id="btn-download-form" type="submit" class="btn btn-primary">
+            Demande de téléchargement
+          </button>
+        </div>
+      </form>
+      <div id="statut-id-{{ forloop.counter0 }}"></div>
+      {% else %}
+      La demande d'accès aux extractions est en cours de validation par les administrateurs.
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+      <br />
+      {% if lmes|length == 0 %}
+      {% if has_one_territoire %}
+      <div style="padding-bottom: 5em;">
+        <hr>
+        <div>
+          <h4>
+            <strong>DEMANDER L'ACCÈS AUX EXTRACTIONS</strong>
+          </h4>
+          <p>
+            Prenez connaissance des procédures et contraintes applicables sur ces données :
+            <br />
+            <a href="{% static "files/lme/Procedure_mise_a_disposition_fichiers_LME.pdf" %}" target="_blank" class="card-link">
+              Procédure de mise à disposition des fichiers LME
+            </a>
+          </p>
+          <h5><strong>TÉLÉCHARGER LE DOCUMENT À SIGNER</strong></h5>
+          <div>
+            Téléchargez et remplissez <a href="{% static "files/lme/Acte_engagement_mise_a_disposition_fichiers_LME.pdf" %}" target="_blank" class="card-link">l'acte d'engagement.</a>
+          </div>
+        </div>
+        <br />
+        <div>
+          <form method="POST" action="" enctype="multipart/form-data" id="majic-lme-form">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-sm-5">
+                {% if organisations|length == 1 %}
+                <h5>ORGANISATION</h5>
+                {% else %}
+                <h5>ORGANISATIONS</h5>
+                {% endif %}
+                {{ profile.jurisdiction }}
+                <div class="list-group" id="id_list_groups">
+                  <fieldset id="fieldset-organisation">
+                    {% for organisation in organisations %}
+                    {% if organisation.jurisdiction %}
+                    <div>
+                      <label class="form-check-label" for="organisation">
+                        <input class="form-check-input" type="radio" name="organisation" id="{{ forloop.counter0 }}-organisation-input" value="{{ organisation.pk }}" />
+                        {{ organisation.legal_name }} - {{ organisation.jurisdiction }}
+                      </label>
+                    </div>
+                    {% else %}
+                    <a href="{% url "idgo_admin:show_organisation" id=organisation.pk %}#info">
+                      {{ organisation.legal_name }}
                     </a>
-                </p>
-                <h5><b>TÉLÉCHARGER LE DOCUMENT À SIGNER</b></h5>
-                <div>
-                  Téléchargez et remplissez 
-                  
-                  <a href="{% static "files/lme/Acte_engagement_mise_a_disposition_fichiers_LME.pdf" %}" target="_blank"
-                    class="card-link">l’acte d’engagement.
-                  </a>
-                </div>
-
-                <div>
-                  <p>
-                    Fournir les coordonnées du DPO de votre organisme. S’il n’y en n’a pas, votre organisme doit en nommer un et
-                    faire la déclaration sur le site de la CNIL :
-                    <a href="https://www.cnil.fr/fr/designation-dpo"
-                      target="_blank">
-                      https://www.cnil.fr/fr/designation-dpo.
-                    </a>
-                  </p>
+                    - Le territoire de compétence n'est pas défini, vous ne pouvez pas accéder au service.
+                    {% endif %}
+                    {% endfor %}
+                  </fieldset>
                 </div>
               </div>
-            <br>
-            <div>
-              <form method="POST" action="" enctype="multipart/form-data" id="majic-lme-form">
-                {% csrf_token %}
-                <div class="row">
-                  <div class="col-sm-5">
-                    {%if organisations|length == 1%}
-                      <h5>ORGANISATION</h5>
-                    {%else%}
-                      <h5>ORGANISATIONS</h5>
-                    {%endif %}
-                    {{profile.jurisdiction}}
-                    <div class="list-group" id="id_list_groups">
-                      <fieldset id="fieldset-organisation">
-                        {% for organisation in organisations %}
-                          {% if organisation.jurisdiction  %}
-                            <div>
-                              <label class="form-check-label" for="organisation">
-                                <input 
-                                  class="form-check-input" 
-                                  type="radio" 
-                                  name="organisation" 
-                                  id="{{ forloop.counter0 }}-organisation-input" 
-                                  value="{{ organisation.pk }}"/>
-                                  {{ organisation.legal_name }} - {{ organisation.jurisdiction }}
-                              </label>
-                            </div>
-                          {%else%}
-                            <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
-                              {{ organisation.legal_name }}
-                            </a>
-                              - Le territoire de compétence n'est pas défini, vous ne pouvez pas accéder au service.
-                          {% endif %}
-                        {% endfor %}
-                      </fieldset>
-                    </div>
-                  </div>
-                  {%if has_one_territoire %}
-                    <div class="col-sm-7">
-                      <h5)>TERRITOIRE DE COMPÉTENCE</h5>
-                      {% if organisations  %}
-                        {% include "idgo_lme_majic/organisation/jurisdiction.html" %}
-                      {% endif %}
-                    </div>
-                  {% endif %}
-                  <br>
-                  <div id="organisation-inputs">
-                    <div class="col-sm-10" style="padding-left: 2em;">
-                      <div class="row">
-                        <div class="mb-3">
-                          <label for="formFile" class="form-label">Ajouter l’acte d’engagement signé</label>
-                          <div>
-                            <div id="list_file_clause"></div>
-                            <input 
-                              type="button" 
-                              class="btn btn-primary" 
-                              id="loadFileXml" 
-                              value="Parcourir..." 
-                              onclick="document.getElementById('fileClause').click();" />
-                            <input type="file" style="display:none;" id="fileClause" name="fileClause"/>
-                          </div>
-                        </div>
-                      </div>
-                      <br>
-                      <input id="lme" name="lme" type="hidden" value="true">
-                      <div id="button-submit" class="buttons-on-the-right-side">
-                        <button type="submit" class="btn btn-primary">Envoyer la demande</button>
+              {% if has_one_territoire %}
+              <div class="col-sm-7">
+                <h5>TERRITOIRE DE COMPÉTENCE</h5>
+                {% if organisations %}
+                {% include "idgo_lme_majic/organisation/jurisdiction.html" %}
+                {% endif %}
+              </div>
+              {% endif %}
+              <br />
+              <div id="organisation-inputs">
+                <div class="col-sm-10" style="padding-left: 2em;">
+                  <div class="row">
+                    <div class="mb-3">
+                      <label for="formFile" class="form-label">Ajouter l'acte d'engagement signé</label>
+                      <div>
+                        <div id="list_file_clause"></div>
+                        <input type="button" class="btn btn-primary" id="loadFileXml" value="Parcourir..." onclick="document.getElementById('fileClause').click();" />
+                        <input type="file" style="display:none;" id="fileClause" name="fileClause" />
                       </div>
                     </div>
                   </div>
-              </form>
-            </div>
-          
-            </div>
-          {% endif %}
-        {% endif %}
+                  <br />
+                  <input id="lme" name="lme" type="hidden" value="true" />
+                  <div id="button-submit" class="buttons-on-the-right-side">
+                    <button type="submit" class="btn btn-primary">Envoyer la demande</button>
+                  </div>
+                </div>
+              </div>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+      {% endif %}
     </div>
   </div>
 </div>
-
 <script src="{% static "js/lme_majic.js" %}"></script>
-
 <script>
-  function check_cookies(){
+  function check_cookies() {
     var cookieExtraction = checkCookie('extraction-lme');
     var request_id = 0;
     if (cookieExtraction != false) {
-      let secret = cookieExtraction.substring(0, 6)
-      request_id = cookieExtraction.split("request_id=")[1];
-      response_html = response_ok(cookieExtraction.substring(6), secret, request_id)
-      set_response(response_html)
+      let secret = cookieExtraction.substring(0, 6);
+      request_id = cookieExtraction.split('request_id=')[1];
+      var response_html = response_ok(cookieExtraction.substring(6), secret, request_id);
+      set_response(response_html);
     }
     return request_id;
   }
 </script>
-
 {% endblock main %}

@@ -7,258 +7,216 @@
 <div class="container">
   <div class="row">
     <div class="alert alert-danger" style="display: none;" id="msg-validation-error"></div>
-      <div class="col-md-offset-1 col-md-10" id="title" value='majic'>
-        <h1>Espace MAJIC</h1>
+    <div class="col-md-offset-1 col-md-10" id="title" value='majic'>
+      <h1>Espace MAJIC</h1>
+      <p>
+        Les données MAJIC 2021 sont disponibles au téléchargement pour les partenaires de la Région Provence-Alpes-Côte
+        d'Azur sous réserve d'être ayants droit de la DGFIP.
+        <br />
+        Ce nouveau service prend en charge vos demandes de fichiers MAJIC depuis le mois de septembre 2021.
+        <br />
+        Seuls les référents sont autorisés à récupérer les données MAJIC de leurs territoires.
+        Si vous n'êtes pas référent, vous devez en faire la demande avant d'accéder au service, en vous rendant sur
+        <a href="{% url "idgo_admin:handle_show_organisation" %}#info">
+          la page des Organisations.
+        </a>
+      </p>
+      {% if not majics %}
+      {% if has_not_one_territoire %}
+      <div id="has_not_one_territoire">
         <p>
-          Les données MAJIC 2021 sont disponibles au téléchargement pour les partenaires de la Région Provence-Alpes-Côte
-          d’Azur sous réserve d’être ayants droit de la DGFIP.
-          <br>
-          Ce nouveau service prend en charge vos demandes de fichiers MAJIC depuis le mois de septembre 2021.
-          <br>
-          Seuls les référents sont autorisés à récupérer les données MAJIC de leurs territoires. 
-          Si vous n'êtes pas référent, vous devez en faire la demande avant d'accéder au service, en vous rendant sur 
-          <a href="{% url 'idgo_admin:handle_show_organisation' %}#info ">
-            la page des Organisations.
+          Cliquez sur l'organisation pour definir le territoire de compétence :
+          {% for organisation in organisations %}
+          {% if organisation.jurisdiction is None %}
+          <ul>
+            <li>
+              <a href="{% url "idgo_admin:show_organisation" id=organisation.pk %}#info">
+                {{ organisation.legal_name }}
+              </a>
+            </li>
+          </ul>
+          {% endif %}
+          {% endfor %}
+        </p>
+      </div>
+      {% endif %}
+      {% endif %}
+
+      {% if majics %}
+      <hr />
+      {% if majics.0.majic %}
+      <h4><strong>DEMANDE D'EXTRACTION</strong></h4>
+      {% else %}
+      <h4><strong>DEMANDE D'ACCÈS EN COURS D'INSTRUCTION</strong></h4>
+      {% endif %}
+      {% for majic in majics %}
+      {% if majic.majic %}
+      <div class="row">
+        <div class="col-sm-5">
+          <h5>Accès valide jusqu'au
+            <strong>{{ majic.date_expiration_majic }}</strong>
+          </h5>
+        </div>
+        <div class="col-sm-7">
+          <h5>TERRITOIRE DE COMPÉTENCE</h5>
+          {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
+        </div>
+      </div>
+      <form method="POST" action="" id="download-form">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-sm-5">
+            <h5>Mode d'extraction :</h5>
+              <fieldset id="group1">
+                <div>
+                  <input onchange="handleChange(this);" class="form-check-input" type="radio" name="organisation" id="mode" value="split" checked>
+                  <label class="form-check-label" for="organisation">
+                    1 fichier par communes
+                  </label>
+                </div>
+                <div>
+                  <input onchange="handleChange(this);" class="form-check-input" type="radio" name="organisation" id="mode" value="group">
+                  <label class="form-check-label" for="organisation">
+                    1 fichier pour toutes les communes
+                  </label>
+                </div>
+                <div>
+                  <input onchange="handleChange(this);" class="form-check-input" type="radio" name="organisation" id="mode" value="both">
+                  <label class="form-check-label" for="organisation">
+                    1 fichier par commune et 1 fichier groupé
+                  </label>
+                </div>
+              </fieldset>
+          </div>
+        </div>
+        <input name="organisation" type="hidden" id="0-organisation-input" value="{{ majic.organisation.pk }}">
+        <input id="secret" name="secret" type="hidden" value="">
+        <input id="request_id" name="request_id" type="hidden" value="">
+        <input id="download_file" name="download_file" type="hidden" value="true">
+        <div class="buttons-on-the-right-side">
+          <button id="btn-download-form" type="submit" class="btn btn-primary">Demande de téléchargement</button>
+        </div>
+      </form>
+      <div id='statut-id-{{ forloop.counter0 }}'></div>
+      {% else %}
+      La demande d'accès aux extractions est en cours de validation par les administrateurs.
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+
+      <br />
+      {% if majics|length == 0 %}
+      {% if has_one_territoire %}
+      <div style="padding-bottom: 5em;">
+        <hr />
+        <div>
+          <h4><strong>DEMANDER L'ACCÈS AUX EXTRACTIONS</strong></h4>
+          <p>
+            Prenez connaissance des procédures et contraintes applicables sur ces données :
+            <br />
+            <a href="{% static "files/majic/procedure_mad_majic.pdf" %}" target="_blank" class="card-link">
+              Procédure de mise à disposition des fichiers fonciers DGFiP
             </a>
           </p>
-          {% if not majics %}
-            {% if has_not_one_territoire %}
-              <div id="has_not_one_territoire">
-                <p>
-                  <br>Cliquez sur l'organisation pour definir le territoire de compétence :
-                  {% for organisation in organisations %}
-                    {% if organisation.jurisdiction is None%}
-                      <div>
-                        - 
-                        <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
-                          {{ organisation.legal_name }} 
-                        </a>
-                      </div>
-                      {% endif %}
-                  {% endfor %}
-                </p>
-              </div>
-            {% endif %}
-          {% endif %}
-        
-        {% if majics  %}
-        <hr>
-          {% if majics.0.majic  %}
-            <h4><b>DEMANDE D'EXTRACTION</b></h4>
-          {% else %}
-            <h4><b>DEMANDE D'ACCÈS EN COURS D'INSTRUCTION</b></h4>
-          {% endif %}
-          {% for majic in majics %}
-            {%if majic.majic%}
-              <div class="row">
-                <div class="col-sm-5">
-                  <h5>Accès valide jusqu'au 
-                    <b>{{majic.date_expiration_majic}}</b>
-                  </h5>
-                </div>
-                <div class="col-sm-7">
-                    <h5)>TERRITOIRE DE COMPÉTENCE</h5>
-                    {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
-                </div>
-              </div>
-              <form method="POST" action="" id="download-form">
-                {% csrf_token %}
-                <div class="row">
-                  <div class="col-sm-5">
-                    <h5)>Mode d'extraction :</h5>
-                    <fieldset id="group1">
-                      <div>
-                        <input
-                          onchange="handleChange(this);"
-                          class="form-check-input" 
-                          type="radio" 
-                          name="organisation" 
-                          id="mode" 
-                          value="split"
-                          checked>
-                        <label class="form-check-label" for="organisation">
-                          1 fichier par communes
-                        </label>
-                      </div>
-                      <div>
-                        <input
-                          onchange="handleChange(this);"
-                          class="form-check-input" 
-                          type="radio" 
-                          name="organisation" 
-                          id="mode" 
-                          value="group">
-                        <label class="form-check-label" for="organisation">
-                          1 fichier pour toutes les communes
-                        </label>
-                      </div>
-                      <div>
-                        <input
-                          onchange="handleChange(this);"
-                          class="form-check-input" 
-                          type="radio" 
-                          name="organisation" 
-                          id="mode" 
-                          value="both">
-                        <label class="form-check-label" for="organisation">
-                          1 fichier par commune et 1 fichier groupé
-                        </label>
-                      </div>
-                    </fieldset>
-                  </div>
-                </div>
-                <input 
-                  name="organisation" 
-                  type="hidden"
-                  id="0-organisation-input" 
-                  value="{{majic.organisation.pk}}">
-                <input id="secret" name="secret" type="hidden" value="">
-                <input id="request_id" name="request_id" type="hidden" value="">
-                <input id="download_file" name="download_file" type="hidden" value="true">
-                <div class="buttons-on-the-right-side">
-                  <button id="btn-download-form" type="submit" class="btn btn-primary">Demande de téléchargement</button>
-                </div>
-              </form>
-              <div id='statut-id-{{ forloop.counter0 }}'></div>
-            {%else%}
-              La demande d'accès aux extractions est en cours de validation par les administrateurs.
-            {%endif%}
-          {% endfor %}
-        {% endif %}
-      
-        <br>
-        {% if majics|length == 0%}
-          {% if has_one_territoire  %}
-            <div style="padding-bottom: 5em;">
-              <hr>
-              <div>
-                <h4><b>DEMANDER L'ACCÈS AUX EXTRACTIONS</b></h4>
-                <p>
-                  Prenez connaissance des procédures et contraintes applicables sur ces données :
-                  <br>
-                  <a href="{% static "files/majic/procedure_mad_majic.pdf" %}" 
-                    target="_blank"
-                    class="card-link"
-                    >
-                      Procédure de mise à disposition des fichiers fonciers DGFiP
-                    </a>
-                </p>
-                <h5><b>TÉLÉCHARGER LE DOCUMENT À SIGNER</b></h5>
-                <div>
-                  Téléchargez et remplissez 
-                  
-                  <a href="{% static "files/majic/Clause_de_confidentialite.pdf" %}" target="_blank"
-                    class="card-link">l’acte d’engagement.
-                  </a>
-                </div>
-
-                <div>
-                  <p>
-                    Fournir les coordonnées du DPO de votre organisme. S’il n’y en n’a pas, votre organisme doit en nommer un et
-                    faire la déclaration sur le site de la CNIL :
-                    <a href="https://www.cnil.fr/fr/designation-dpo"
-                      target="_blank">
-                      https://www.cnil.fr/fr/designation-dpo.
-                    </a>
-                    <br>
-                  </p>
-                </div>
-              </div>
-            <br>
-            <div>
-              <form method="POST" action="" enctype="multipart/form-data" id="majic-lme-form">
-                {% csrf_token %}
-                <div class="row">
-                  <div class="col-sm-5">
-                    {%if organisations|length == 1%}
-                      <h5>ORGANISATION</h5>
-                    {%else%}
-                      <h5>ORGANISATIONS</h5>
-                    {%endif %}
-                    {{profile.jurisdiction}}
-                    <div class="list-group" id="id_list_groups">
-                      <fieldset id="fieldset-organisation">
-                        {% for organisation in organisations %}
-                          {% if organisation.jurisdiction  %}
-                            <div>
-                              <label class="form-check-label" for="organisation">
-                                <input 
-                                  class="form-check-input" 
-                                  type="radio" 
-                                  name="organisation" 
-                                  id="{{ forloop.counter0 }}-organisation-input" 
-                                  value="{{ organisation.pk }}"/>
-                                  {{ organisation.legal_name }} - {{ organisation.jurisdiction }}
-                              </label>
-                            </div>
-                          {%else%}
-                            <a href="{% url 'idgo_admin:show_organisation' id=organisation.pk %}#info ">
-                              {{ organisation.legal_name }}
-                            </a>
-                              - Le territoire de compétence n'est pas défini, vous ne pouvez pas accéder au service.
-                          {% endif %}
-                        {% endfor %}
-                      </fieldset>
+          <h5><strong>TÉLÉCHARGER LE DOCUMENT À SIGNER</strong></h5>
+          <div>
+            Téléchargez et remplissez
+            <a href="{% static "files/majic/Clause_de_confidentialite.pdf" %}" target="_blank" class="card-link">l'acte d'engagement.</a>
+          </div>
+          <div>
+            <p>
+              Fournir les coordonnées du DPO de votre organisme. S'il n'y en n'a pas, votre organisme doit en nommer un et
+              faire la déclaration sur le site de la CNIL :
+              <a href="https://www.cnil.fr/fr/designation-dpo" target="_blank">
+                https://www.cnil.fr/fr/designation-dpo.
+              </a>
+              <br />
+            </p>
+          </div>
+        </div>
+        <br />
+        <div>
+          <form method="POST" action="" enctype="multipart/form-data" id="majic-lme-form">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-sm-5">
+                {% if organisations|length == 1 %}
+                <h5>ORGANISATION</h5>
+                {% else %}
+                <h5>ORGANISATIONS</h5>
+                {% endif %}
+                {{ profile.jurisdiction }}
+                <div class="list-group" id="id_list_groups">
+                  <fieldset id="fieldset-organisation">
+                    {% for organisation in organisations %}
+                    {% if organisation.jurisdiction %}
+                    <div>
+                      <label class="form-check-label" for="organisation">
+                        <input class="form-check-input" type="radio" name="organisation" id="{{ forloop.counter0 }}-organisation-input" value="{{ organisation.pk }}" />
+                        {{ organisation.legal_name }} - {{ organisation.jurisdiction }}
+                      </label>
                     </div>
-                  </div>
-                  {%if has_one_territoire %}
-                    <div class="col-sm-7">
-                      <h5)>TERRITOIRE DE COMPÉTENCE</h5>
-                      {% if organisations  %}
-                        {% include "idgo_lme_majic/organisation/jurisdiction.html"%}
-                      {% endif %}
-                    </div>
+                    {% else %}
+                    <a href="{% url "idgo_admin:show_organisation" id=organisation.pk %}#info">
+                      {{ organisation.legal_name }}
+                    </a>
+                    - Le territoire de compétence n'est pas défini, vous ne pouvez pas accéder au service.
+                    {% endif %}
+                    {% endfor %}
+                  </fieldset>
+                </div>
+              </div>
+              {% if has_one_territoire %}
+              <div class="col-sm-7">
+                <h5)>TERRITOIRE DE COMPÉTENCE</h5>
+                  {% if organisations %}
+                  {% include "idgo_lme_majic/organisation/jurisdiction.html" %}
                   {% endif %}
-                  <br>
-                  <div id="organisation-inputs">
-                    <div class="col-sm-10" style="padding-left: 2em;">
-                      <div class="row">
-                        <div class="mb-3">
-                          <label for="formFile" class="form-label">Ajouter l’acte d’engagement signé</label>
-                          <div>
-                            <div id="list_file_clause"></div>
-                            <input 
-                              type="button" 
-                              class="btn btn-primary" 
-                              id="loadFileXml" 
-                              value="Parcourir..." 
-                              onclick="document.getElementById('fileClause').click();" />
-                            <input type="file" style="display:none;" id="fileClause" name="fileClause"/>
-                          </div>
-                        </div>
-                      </div>
-                      <br>
-                      <input id="majic" name="majic" type="hidden" value="true">
-                      <div id="button-submit" class="buttons-on-the-right-side">
-                        <button type="submit" class="btn btn-primary">Envoyer la demande</button>
+              </div>
+              {% endif %}
+              <br />
+              <div id="organisation-inputs">
+                <div class="col-sm-10" style="padding-left: 2em;">
+                  <div class="row">
+                    <div class="mb-3">
+                      <label for="formFile" class="form-label">Ajouter l'acte d'engagement signé</label>
+                      <div>
+                        <div id="list_file_clause"></div>
+                        <input type="button" class="btn btn-primary" id="loadFileXml" value="Parcourir..." onclick="document.getElementById('fileClause').click();" />
+                        <input type="file" style="display:none;" id="fileClause" name="fileClause" />
                       </div>
                     </div>
                   </div>
-              </form>
-            </div>
-          
-            </div>
-          {% endif %}
-        {% endif %}
+                  <br />
+                  <input id="majic" name="majic" type="hidden" value="true" />
+                  <div id="button-submit" class="buttons-on-the-right-side">
+                    <button type="submit" class="btn btn-primary">Envoyer la demande</button>
+                  </div>
+                </div>
+              </div>
+          </form>
+        </div>
+      </div>
+      {% endif %}
+      {% endif %}
     </div>
   </div>
 </div>
 
 <script src="{% static "js/lme_majic.js" %}"></script>
 <script>
-  function check_cookies(){
+  function check_cookies() {
     var cookieExtraction = checkCookie('extraction-majic');
     var request_id = 0;
     if (cookieExtraction != false) {
-      let secret = cookieExtraction.substring(0, 6)
-      request_id = cookieExtraction.split("request_id=")[1];
-      response_html = response_ok(cookieExtraction.substring(6), secret, request_id)
-      set_response(response_html)
+      let secret = cookieExtraction.substring(0, 6);
+      request_id = cookieExtraction.split('request_id=')[1];
+      var response_html = response_ok(cookieExtraction.substring(6), secret, request_id);
+      set_response(response_html);
     }
     return request_id;
   }
 </script>
-
 {% endblock main %}
 
 <!-- TODO: VALIDATION FICHIER PDF ET TAILLE (COMBIEN?)-->
